@@ -18,6 +18,7 @@ module.exports.choosePokemon = function(commandsArray, callback) {
     module.exports.unrecognizedCommand(commandsArray, callback);
     return;
   }
+  console.log('trying to fetch' + pokemonName);
   //grab the pokemon's data from the API
   pokeapi.getPokemon(pokemonName, function(data){
     console.log(data)
