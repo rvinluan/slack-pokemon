@@ -8,7 +8,7 @@ module.exports.getPokemon = function(name, callback) {
     path: '/api/v1/pokemon/' + name,
     method: 'GET'
   }
-  var req = https.request(options, function(res){
+  var req = http.request(options, function(res){
     res.setEncoding('utf-8');
     var responseString = '';
     res.on('data', function(data) {
@@ -23,7 +23,6 @@ module.exports.getPokemon = function(name, callback) {
       "error": "wrong name"
     }])
   })
-  req.write(dataString);
+  req.write();
   req.end();
-
 }
