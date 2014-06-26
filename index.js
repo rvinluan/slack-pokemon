@@ -21,10 +21,18 @@ app.get('/', function(request, response) {
 })
 
 app.get('/startbattle', function(request, response) {
-  console.log(stateMachine.newBattle("Rob"));
+  stateMachine.newBattle("Rob", function(data) {
+    if(data.error) {
+      response.send(data.error);
+    } else {
+      response.send("battle started!");
+    }
+  })
 });
 app.get('/endbattle', function(request, response) {
-  console.log(stateMachine.endBattle());
+  stateMachine.endBattle(function(data){
+    response.send(data);
+  });
 });
 
 app.post('/commands', function(request, response){

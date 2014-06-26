@@ -14,13 +14,32 @@ if(process.env.REDISTOGO_URL) {
 
 module.exports = {};
 
-module.exports.newBattle = function(playerName) {
-  if(redis.exists("currentBattle")) {
-    return false;
-  }
-  redis.set("currentBattle", playerName, redis.print);
+module.exports.newBattle = function(playerName, callback) {
+  redis.exists("currentBattle", function(err, data) {
+    if(data === 0) {
+      redis.set("currentBattle", playerName, function(e, d){
+        callback({data: d});
+      });
+    } else {
+      callback({error: "battle exists!"})
+    }
+  })
 }
 
-module.exports.endBattle = function() {
-  redis.del("currentBattle");
+module.exports.getBattle = function(callback) {
+  redis.get("currentBattle", function(err, data){
+    if(err) {
+      //TODO: handle.
+    }
+    callback(data);
+  })
+}
+
+module.exports.endBattle = function(callback) {
+  redis.del("currentBattle", function(err, data) {
+    if(err) {
+      //nope.
+    }
+    callback(data);
+  });
 }
