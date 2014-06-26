@@ -51,7 +51,7 @@ module.exports.choosePokemon = function(commandsArray, callback) {
     //get the sprite
     callback({
       text: textString,
-      spriteURL: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
+      spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
     })
   });
 
