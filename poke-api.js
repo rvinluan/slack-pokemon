@@ -10,10 +10,7 @@ module.exports.getPokemon = function(name, callback) {
     res.on("data", function(chunk) {
       console.log("fetching")
       body += chunk;
-    })
-    res.on("end", function(){
-      console.log("done done done");
-    })
+    });
   }).on('error', function(e) {
     console.log("got error: " + e.message)
   })
