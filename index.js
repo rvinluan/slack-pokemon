@@ -28,12 +28,12 @@ app.post('/commands', function(request, response){
       slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl});
     });
   }
-  if(matchCommands(commands, "START")) {
+  else if(matchCommands(commands, "START")) {
     battleText.startBattle(request.body, function(obj){
       slack.sendSlackPost({"text":obj.text})
     })
   }
-  if(matchCommands(commands, "END")) {
+  else if(matchCommands(commands, "END")) {
     battleText.endBattle(function(d){
       slack.sendSlackPost({"text":"Battle over."})
     })
