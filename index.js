@@ -19,17 +19,18 @@ app.get('/', function(request, response) {
 })
 
 app.post('/commands', function(request, response){
-  var commands = request.body.text.split(" ");
+  var commands = request.body.text.toLowerCase().split(" "),
+      bt;
   switch(commands[1]) {
-    case 'use':
-      pokeapi.getPokemon(commands[2], function(json){
-        var ability1 = json.abilities[0].name;
-        slack.sendSlackPost({"text":ability1})
+    case 'i':
+      battleText.choosePokemon(commands, function(text){
+        slack.sendSlackPost({"text":text});
       });
       break;
     default:
-      var bt = battleText.unrecognizedCommand(commands);
-      slack.sendSlackPost({"text":bt.text});
+      battleText.unrecognizedCommand(commands, function(text){
+        slack.sendSlackPost({"text":text});
+      });
       break;
   }
 })
