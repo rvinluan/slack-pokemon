@@ -6,8 +6,7 @@ module.exports.getPokemon = function(name, callback) {
   var options = {
     host: 'pokeapi.co',
     path: '/api/v1/pokemon/' + name,
-    method: 'GET',
-    headers: headers
+    method: 'GET'
   }
   var req = https.request(options, function(res){
     res.setEncoding('utf-8');
