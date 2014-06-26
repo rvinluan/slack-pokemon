@@ -3,26 +3,10 @@ var http = require('http')
 module.exports = {}
 
 module.exports.getPokemon = function(name, callback) {
-  var options = {
-    host: 'pokeapi.co',
-    path: '/api/v1/pokemon/' + name,
-    method: 'GET'
-  }
-  var req = http.request(options, function(res){
-    res.setEncoding('utf-8');
-    var responseString = '';
-    res.on('data', function(data) {
-      responseString += data;
-    });
-    res.on('end', function() {
-      callback.call(this, JSON.parse(responseString))
-    });
+  http.get("http://pokeapi.co/api/v1/pokemon"+name, function(res){
+    console.log(res)
+    callback.call(this, res);
+  }).on('error', function(e) {
+    console.log("got error: " + e.message)
   })
-  req.on('error', function(e){
-    callback.call(this, [{
-      "error": "wrong name"
-    }])
-  })
-  req.write("");
-  req.end();
 }
