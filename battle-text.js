@@ -20,13 +20,14 @@ module.exports.choosePokemon = function(commandsArray, callback) {
   }
   //grab the pokemon's data from the API
   pokeapi.getPokemon(pokemonName, function(data){
+    console.log(data)
     //verify that it was a real pokemon
     if(data.error) {
       callback.call(this, "I don't think that's a real pokemon.");
       return;
     }
-    textString = textString.replace("{pkmnn}", data.name);
-    textString = textString.replace("{hp}", data.hp);
+    //textString = textString.replace("{pkmnn}", data.name);
+    //textString = textString.replace("{hp}", data.hp);
     callback.call(this, textString);
   });
 
