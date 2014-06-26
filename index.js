@@ -41,8 +41,7 @@ app.post('/commands', function(request, response){
   switch(commands[1]) {
     case 'i':
       battleText.choosePokemon(commands, function(obj){
-        slack.sendSlackPost({"text":obj.text});
-        slack.sendSlackPost({"text":obj.spriteUrl});
+        slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl});
       });
       break;
     default:
