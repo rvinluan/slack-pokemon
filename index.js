@@ -14,7 +14,7 @@ app.get('/', function(request, response) {
 })
 
 app.post('/commands', function(request, response){
-  var commands = resquest.body.text.split(" ");
+  var commands = request.body.text.split(" ");
   switch(commands[1]) {
     case 'use':
       pokeapi.getPokemon(commands[2], function(json){
