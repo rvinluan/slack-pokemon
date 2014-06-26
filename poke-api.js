@@ -10,5 +10,8 @@ module.exports.getPokemon = function(name, callback) {
     else if (response.statusCode == 200) {
       callback.call(this, JSON.parse(body));
     }
+    else {
+      callback.call(this, JSON.parse({"error": "weird error"}))
+    }
   })
 }
