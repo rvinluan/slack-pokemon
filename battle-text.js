@@ -27,8 +27,8 @@ module.exports.choosePokemon = function(commandsArray, callback) {
       callback.call(this, "I don't think that's a real pokemon.");
       return;
     }
-    //textString = textString.replace("{pkmnn}", data.name);
-    //textString = textString.replace("{hp}", data.hp);
+    textString = textString.replace("{pkmnn}", data.name);
+    textString = textString.replace("{hp}", data.hp);
     callback.call(this, textString);
   });
 
