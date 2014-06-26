@@ -7,6 +7,8 @@ var slack = require('./slack-api.js')
 var pokeapi = require('./poke-api.js')
 //Generate messages for different situations
 var battleText = require('./battle-text.js')
+//Talk to Redis to find out what state the batte is in
+var stateMachine = require('./state-machine.js')
 var app = express();
 
 app.set('port', (process.env.PORT || 5000))
@@ -17,6 +19,13 @@ app.use(bodyParser.urlencoded())
 app.get('/', function(request, response) {
   response.send('Hello There!')
 })
+
+app.get('/startbattle', function(request, response)) {
+  console.log(stateMachine.newBattle("Rob"));
+}
+app.get('/endbattle', function(request, response)) {
+  console.log(stateMachine.endBattle());
+}
 
 app.post('/commands', function(request, response){
   var commands = request.body.text.toLowerCase().split(" "),
