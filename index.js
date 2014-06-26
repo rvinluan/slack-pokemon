@@ -13,8 +13,7 @@ app.get('/', function(request, response) {
 })
 
 app.post('/commands', function(request, response){
-  console.log(request.body);
-  var dataString = JSON.stringify({"text":"hello there"});
+  var dataString = JSON.stringify({"text":request.body.text});
   var headers = {
     'Content-Type': 'application/json',
     'Content-Length': dataString.length
