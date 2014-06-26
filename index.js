@@ -21,33 +21,45 @@ app.get('/', function(request, response) {
 })
 
 app.post('/commands', function(request, response){
-  console.log(request.body)
   var commands = request.body.text.toLowerCase().split(" "),
       bt;
-  switch(commands[1]) {
-    case 'i':
-      battleText.userChoosePokemon(commands, function(obj){
-        slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl});
-      });
-      break;
-    case 'battle':
-      battleText.startBattle(request.body, function(obj){
-        slack.sendSlackPost({"text":obj.text})
-      })
-      break;
-    case 'end':
-      battleText.endBattle(function(d){
-        slack.sendSlackPost({"text":"Battle over."})
-      })
-      break;
-    default:
-      battleText.unrecognizedCommand(commands, function(text){
-        slack.sendSlackPost({"text":text});
-      });
-      break;
+  if(matchCommands(commands, "CHOOSE")) {
+    battleText.userChoosePokemon(commands, function(obj){
+      slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl});
+    });
+  }
+  if(matchCommands(commands, "START")) {
+    battleText.startBattle(request.body, function(obj){
+      slack.sendSlackPost({"text":obj.text})
+    })
+  }
+  if(matchCommands(commands, "END")) {
+    battleText.endBattle(function(d){
+      slack.sendSlackPost({"text":"Battle over."})
+    })
+  }
+  else {
+    battleText.unrecognizedCommand(commands, function(text){
+      slack.sendSlackPost({"text":text});
+    });
   }
 })
 
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'))
 })
+
+//utility functions
+
+function matchCommands(commandArray, command) {
+  var commandsDict = {
+    "CHOOSE": "i choose",
+    "ATTACK": "use",
+    "START": "battle me",
+    "END": "end battle"
+  }
+  //get rid of the 'pkmn'
+  var cmdString = commandArray.shift().join(" ").toLowerCase();
+  return cmdString.indexOf(commandsDict[command]) === 0
+
+}
