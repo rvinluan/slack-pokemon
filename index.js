@@ -21,6 +21,7 @@ app.post('/commands', function(request, response){
         if(json.error) { console.log('error calling the pokemon api') }
         slack.sendSlackPost({"text":"you chose the pokemon "+commands[2]})
       });
+      break;
     default:
       slack.sendSlackPost({"text":commands.join(" ")});
   }
