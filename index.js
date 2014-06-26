@@ -13,6 +13,7 @@ app.get('/', function(request, response) {
 })
 
 app.post('/commands', function(request, response){
+  console.log(request.body);
   var dataString = JSON.stringify({"text":"hello there"});
   var headers = {
     'Content-Type': 'application/json',
@@ -29,11 +30,9 @@ app.post('/commands', function(request, response){
     res.setEncoding('utf-8');
     var responseString = '';
     res.on('data', function(data) {
-      console.log(data)
       responseString += data;
     });
     res.on('end', function() {
-      console.log(responseString)
       response.send('posted!\n')
     });
   })
