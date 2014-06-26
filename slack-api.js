@@ -7,7 +7,6 @@ module.exports.sendSlackPost = function(hash) {
     "text":hash.text
   });
 
-
   var headers = {
     'Content-Type': 'application/json',
     'Content-Length': dataString.length
