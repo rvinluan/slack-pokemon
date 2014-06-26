@@ -49,6 +49,7 @@ app.post('/commands', function(request, response){
       battleText.startBattle(request.body, function(obj){
         slack.sendSlackPost({"text":obj.text})
       })
+      break;
     default:
       battleText.unrecognizedCommand(commands, function(text){
         slack.sendSlackPost({"text":text});
