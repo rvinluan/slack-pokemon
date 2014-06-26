@@ -69,8 +69,8 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
 }
 
 module.exports.startBattle = function(slackData, callback) {
-  textString = "OK {name}, I'll battle you!"
-  stateMachine.newBattle("Rob", "localhost", function(data) {
+  textString = "OK {name}, I'll battle you!".replace("{name}", slackData.user_name)
+  stateMachine.newBattle(slackData.user_name, slackData.channel_name, function(data) {
     if(data.error) {
       //There's already a battle. Get data and then stop.
       stateMachine.getBattle(function(d){
@@ -79,7 +79,9 @@ module.exports.startBattle = function(slackData, callback) {
         })
       });
     } else {
-      console.log('started a battle');
+      callback({
+        text: textString
+      })
     }
   })
 }
