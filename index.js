@@ -20,28 +20,13 @@ app.get('/', function(request, response) {
   response.send('Hello There!')
 })
 
-app.get('/startbattle', function(request, response) {
-  stateMachine.newBattle("Rob", function(data) {
-    if(data.error) {
-      response.send(data.error);
-    } else {
-      response.send("battle started!");
-    }
-  })
-});
-app.get('/endbattle', function(request, response) {
-  stateMachine.endBattle(function(data){
-    response.send(data);
-  });
-});
-
 app.post('/commands', function(request, response){
   console.log(request.body)
   var commands = request.body.text.toLowerCase().split(" "),
       bt;
   switch(commands[1]) {
     case 'i':
-      battleText.choosePokemon(commands, function(obj){
+      battleText.userChoosePokemon(commands, function(obj){
         slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl});
       });
       break;
