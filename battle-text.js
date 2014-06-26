@@ -48,7 +48,13 @@ module.exports.choosePokemon = function(commandsArray, callback) {
     }
     textString = textString.replace("{pkmnn}", data.name);
     textString = textString.replace("{hp}", data.hp);
-    callback.call(this, textString);
+    //get the sprite
+    pokeapi.getSprite("http://pokeapi.co" + data.sprites[0].resource_uri, function(spriteData) {
+      callback({
+        text: textString,
+        spriteURL: spriteData.image
+      })
+    })
   });
 
 }
