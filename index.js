@@ -60,6 +60,7 @@ function matchCommands(commandArray, command) {
   }
   //get rid of the 'pkmn'
   commandArray.shift();
+  console.log(cmdString);
   var cmdString = commandArray.join(" ").toLowerCase();
   return cmdString.indexOf(commandsDict[command]) === 0
 
