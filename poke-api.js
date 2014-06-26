@@ -3,7 +3,7 @@ var http = require('http')
 module.exports = {}
 
 module.exports.getPokemon = function(name, callback) {
-  http.get("pokeapi.co/api/v1/pokemon/"+name, function(res){
+  http.get("http://pokeapi.co/api/v1/pokemon/"+name, function(res){
     console.log("Got response: " + res.statusCode);
     res.setEncoding('utf-8');
     body = '';
