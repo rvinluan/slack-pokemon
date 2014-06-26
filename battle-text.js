@@ -4,6 +4,7 @@ module.exports = {}
 
 module.exports.unrecognizedCommand = function(commandsArray, callback) {
   var textString = "I don't recognize the command _{cmd}_ . Try <http://rv-slack-pokemon.herokuapp.com> for help.";
+  commandsArray.shift(); //get rid of the 'pkmn'
   textString = textString.replace("{cmd}", commandsArray.join(" "));
   callback.call(this, textString);
 }
