@@ -14,10 +14,13 @@ if(process.env.REDISTOGO_URL) {
 
 module.exports = {};
 
-module.exports.newBattle = function(playerName, callback) {
+module.exports.newBattle = function(playerName, channel, callback) {
   redis.exists("currentBattle", function(err, data) {
     if(data === 0) {
-      redis.set("currentBattle", playerName, function(e, d){
+      redis.hmset("currentBattle", {
+        "playerName": playerName,
+        "channel": channel
+      }, function(e, d){
         callback({data: d});
       });
     } else {
@@ -27,11 +30,11 @@ module.exports.newBattle = function(playerName, callback) {
 }
 
 module.exports.getBattle = function(callback) {
-  redis.get("currentBattle", function(err, data){
+  redis.hgetall("currentBattle", function(err, obj){
     if(err) {
       //TODO: handle.
     }
-    callback(data);
+    callback(obj);
   })
 }
 

@@ -36,6 +36,7 @@ app.get('/endbattle', function(request, response) {
 });
 
 app.post('/commands', function(request, response){
+  console.log(request.body)
   var commands = request.body.text.toLowerCase().split(" "),
       bt;
   switch(commands[1]) {
@@ -44,6 +45,10 @@ app.post('/commands', function(request, response){
         slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl});
       });
       break;
+    case 'battle':
+      battleText.startBattle(request.body, function(obj){
+        slack.sendSlackPost({"text":obj.text})
+      })
     default:
       battleText.unrecognizedCommand(commands, function(text){
         slack.sendSlackPost({"text":text});

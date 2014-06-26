@@ -1,4 +1,5 @@
 var pokeapi = require('./poke-api.js')
+var stateMachine = require('./state-machine.js')
 
 //+ Jonas Raoni Soares Silva
 //@ http://jsfromhell.com/array/shuffle [v1.0]
@@ -16,7 +17,21 @@ module.exports.unrecognizedCommand = function(commandsArray, callback) {
   callback.call(this, textString);
 }
 
-module.exports.choosePokemon = function(commandsArray, callback) {
+module.exports.choosePokemon = function(pokemonName, callback) {
+  pokeapi.getPokemon(pokemonName, function(data){
+    if(data.error) {
+      callback({
+        error: "pokemon didn't exist",
+        text: "I don't think that's a real pokemon."
+      })
+      return;
+    }
+
+    callback(data)
+  });
+}
+
+module.exports.userChoosePokemon = function(commandsArray, callback) {
   var commandString = commandsArray.join(" "),
       pokemonName = commandsArray[3],
       textString = "You chose {pkmnn}. It has {hp} HP, and knows ",
@@ -26,14 +41,11 @@ module.exports.choosePokemon = function(commandsArray, callback) {
     module.exports.unrecognizedCommand(commandsArray, callback);
     return;
   }
-  //grab the pokemon's data from the API
-  pokeapi.getPokemon(pokemonName, function(data){
-    //verify that it was a real pokemon
+  module.exports.choosePokemon(pokemonName, function(data){
     if(data.error) {
-      callback.call(this, "I don't think that's a real pokemon.");
+      callback(data.text)
       return;
     }
-    //find 4 random moves
     moves = shuffle(data.moves);
     //vine whip, leer, solar beam, and tackle.
     for(var i = 0; i < 4; i++) {
@@ -48,11 +60,26 @@ module.exports.choosePokemon = function(commandsArray, callback) {
     }
     textString = textString.replace("{pkmnn}", data.name);
     textString = textString.replace("{hp}", data.hp);
-    //get the sprite
     callback({
       text: textString,
       spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
     })
   });
 
+}
+
+module.exports.startBattle = function(slackData, callback) {
+  textString = "OK {name}, I'll battle you!"
+  stateMachine.newBattle("Rob", "localhost", function(data) {
+    if(data.error) {
+      //There's already a battle. Get data and then stop.
+      stateMachine.getBattle(function(d){
+        callback({
+          text: "Sorry, I'm already in a battle in #" + d.channel
+        })
+      });
+    } else {
+      console.log('started a battle')
+    }
+  })
 }
