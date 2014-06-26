@@ -23,6 +23,6 @@ module.exports.getPokemon = function(name, callback) {
       "error": "wrong name"
     }])
   })
-  req.write();
+  req.write("");
   req.end();
 }
