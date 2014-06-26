@@ -8,11 +8,11 @@ module.exports.getPokemon = function(name, callback) {
     res.setEncoding('utf-8');
     body = '';
     res.on("data", function(chunk) {
+      console.log("fetching")
       body += chunk;
     })
     res.on("end", function(){
-      console.log(body);
-      // callback.call(this, JSON.parse(body));h
+      console.log("done done done");
     })
   }).on('error', function(e) {
     console.log("got error: " + e.message)
