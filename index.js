@@ -19,7 +19,8 @@ app.post('/commands', function(request, response){
     case 'use':
       pokeapi.getPokemon(commands[2], function(json){
         if(json.error) { console.log('error calling the pokemon api') }
-        slack.sendSlackPost({"text":"you chose the pokemon "+commands[2]})
+        var abilities = [json.abilites[0].name, json.abilities[1].name]
+        slack.sendSlackPost({"text":"you chose "+commands[2]+"! Its abilities are "+abilities[0]+" and "+abilities[0]+"."})
       });
       break;
     default:
