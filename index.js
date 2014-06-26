@@ -20,12 +20,12 @@ app.get('/', function(request, response) {
   response.send('Hello There!')
 })
 
-app.get('/startbattle', function(request, response)) {
+app.get('/startbattle', function(request, response) {
   console.log(stateMachine.newBattle("Rob"));
-}
-app.get('/endbattle', function(request, response)) {
+});
+app.get('/endbattle', function(request, response) {
   console.log(stateMachine.endBattle());
-}
+});
 
 app.post('/commands', function(request, response){
   var commands = request.body.text.toLowerCase().split(" "),
