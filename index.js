@@ -59,7 +59,8 @@ function matchCommands(commandArray, command) {
     "END": "end battle"
   }
   //get rid of the 'pkmn'
-  var cmdString = commandArray.shift().join(" ").toLowerCase();
+  commandArray.shift();
+  var cmdString = commandArray.join(" ").toLowerCase();
   return cmdString.indexOf(commandsDict[command]) === 0
 
 }
