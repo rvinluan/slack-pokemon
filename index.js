@@ -50,6 +50,11 @@ app.post('/commands', function(request, response){
         slack.sendSlackPost({"text":obj.text})
       })
       break;
+    case 'end':
+      battleText.endBattle(function(d){
+        slack.sendSlackPost({"text":"Battle over."})
+      })
+      break;
     default:
       battleText.unrecognizedCommand(commands, function(text){
         slack.sendSlackPost({"text":text});

@@ -85,3 +85,7 @@ module.exports.startBattle = function(slackData, callback) {
     }
   })
 }
+
+module.exports.endBattle = function(callback) {
+  stateMachine.endBattle(callback);
+}
