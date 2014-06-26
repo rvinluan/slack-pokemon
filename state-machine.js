@@ -32,7 +32,7 @@ module.exports.newBattle = function(playerName, channel, callback) {
 module.exports.getBattle = function(callback) {
   redis.hgetall("currentBattle", function(err, obj){
     if(err) {
-      //TODO: handle.
+      callback({error: "didn't work."})
     }
     callback(obj);
   })

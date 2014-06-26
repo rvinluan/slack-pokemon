@@ -79,7 +79,7 @@ module.exports.startBattle = function(slackData, callback) {
         })
       });
     } else {
-      console.log('started a battle')
+      console.log('started a battle');
     }
   })
 }
