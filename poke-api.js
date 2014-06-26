@@ -17,6 +17,7 @@ module.exports.getPokemon = function(name, callback) {
 }
 
 module.exports.getSprite = function(url, callback) {
+  console.log('getting sprite at ' + url)
   request(url, function (error, response, body) {
     if (response.statusCode == 404) {
       callback.call(this, {"error": "failed to get sprite"});
