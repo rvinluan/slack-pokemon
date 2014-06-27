@@ -103,7 +103,7 @@ module.exports.endBattle = function(callback) {
 module.exports.useMove = function(moveName, callback) {
   var textString = "You used {movename}. The type is {type}."
   stateMachine.getUserAllowedMoves(function(data){
-    console.log(data);
+    console.log("is " +moveName+ " in " + data);
     if(data.indexOf(moveName) !== -1) {
       stateMachine.getSingleMove(moveName, function(d){
         var type = d.type;
