@@ -50,12 +50,13 @@ module.exports.endBattle = function(callback) {
 }
 
 module.exports.addMove = function(data, callback) {
-  console.log(data.name.toLowerCase() + " before putting in: " + JSON.stringify(data))
+  console.log("about to put in the move " data.name.toLowerCase())
   redis.sadd("user:allowedMoves", data.name.toLowerCase());
   redis.hmset("move:"+data.name.toLowerCase(), {
     "power": data.power,
     "type": moves.getMoveType(data.name.toLowerCase())
   }, function(data){
+    console.log('this should mean hmset is done.');
     callback(data)
   })
 }
