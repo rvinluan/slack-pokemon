@@ -106,6 +106,7 @@ module.exports.useMove = function(moveName, callback) {
     console.log("is " +moveName+ " in " + data);
     if(data.indexOf(moveName) !== -1) {
       stateMachine.getSingleMove(moveName, function(d){
+        console.log("returned from getSingleMove:" + JSON.stringify(d))
         var type = d.type;
         textString = textString.replace("{type}", type);
         callback({"text": textString.replace("{movename}", moveName)})        
