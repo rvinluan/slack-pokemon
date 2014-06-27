@@ -1,6 +1,7 @@
 var fs = require('fs');
 
 module.exports.getMoveType = function(moveName) {
+  moveName = moveName.replace("-", " ");
   var data = fs.readFileSync("./scraped_json/scrape_output.json");
   data = JSON.parse(data);
   data = data.filter(function(val, index, arr){
