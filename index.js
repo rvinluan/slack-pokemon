@@ -25,31 +25,31 @@ app.post('/commands', function(request, response){
       bt;
   if(matchCommands(commands, "CHOOSE")) {
     battleText.userChoosePokemon(commands, function(obj){
-      slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl});
+      response.write({"text":obj.text + "\n" + obj.spriteUrl});
     });
   }
   else if(matchCommands(commands, "ATTACK")) {
     battleText.useMove(commands[2], function(obj){
-      slack.sendSlackPost({"text": obj.text})
+      response.write({"text": obj.text})
     })
   }
   else if(matchCommands(commands, "START")) {
     battleText.startBattle(request.body, function(obj){
       if(obj.spriteUrl) {
-        slack.sendSlackPost({"text":obj.text + "\n" + obj.spriteUrl})
+        response.write({"text":obj.text + "\n" + obj.spriteUrl})
       } else {
-        slack.sendSlackPost({"text":obj.text})        
+        response.write({"text":obj.text})        
       }
     })
   }
   else if(matchCommands(commands, "END")) {
     battleText.endBattle(function(d){
-      slack.sendSlackPost({"text":"Battle over."})
+      response.write({"text":"Battle over."})
     })
   }
   else {
     battleText.unrecognizedCommand(commands, function(text){
-      slack.sendSlackPost({"text":text});
+      response.write({"text":text});
     });
   }
 })
