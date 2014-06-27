@@ -23,33 +23,34 @@ app.get('/', function(request, response) {
 app.post('/commands', function(request, response){
   var commands = request.body.text.toLowerCase().split(" "),
       bt;
+  response.writeHead(200, {"Content-Type": "application/json"});
   if(matchCommands(commands, "CHOOSE")) {
     battleText.userChoosePokemon(commands, function(obj){
-      response.write({"text":obj.text + "\n" + obj.spriteUrl});
+      response.write(JSON.stringify({"text":obj.text + "\n" + obj.spriteUrl}));
     });
   }
   else if(matchCommands(commands, "ATTACK")) {
     battleText.useMove(commands[2], function(obj){
-      response.write({"text": obj.text})
+      response.write(JSON.stringify({"text": obj.text}))
     })
   }
   else if(matchCommands(commands, "START")) {
     battleText.startBattle(request.body, function(obj){
       if(obj.spriteUrl) {
-        response.write({"text":obj.text + "\n" + obj.spriteUrl})
+        response.write(JSON.stringify({"text":obj.text + "\n" + obj.spriteUrl}))
       } else {
-        response.write({"text":obj.text})        
+        response.write(JSON.stringify({"text":obj.text}))        
       }
     })
   }
   else if(matchCommands(commands, "END")) {
     battleText.endBattle(function(d){
-      response.write({"text":"Battle over."})
+      response.write(JSON.stringify({"text":"Battle over."}))
     })
   }
   else {
     battleText.unrecognizedCommand(commands, function(text){
-      response.write({"text":text});
+      response.write(JSON.stringify({"text":text}));
     });
   }
 })
