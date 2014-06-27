@@ -128,7 +128,8 @@ module.exports.endBattle = function(callback) {
 }
 
 module.exports.useMove = function(moveName, callback) {
-  var msgs_array = [];
+  var msgs_array = [],
+      gameOver = false;;
   //first you go
   var textString = "You used {movename}. "
   stateMachine.getUserAllowedMoves(function(data){
@@ -146,6 +147,7 @@ module.exports.useMove = function(moveName, callback) {
               stateMachine.endBattle(function(){
                 callback({"text": "You beat me!"})
               })
+              gameOver = true;
               return;
             }
             textString += "It did {dmg} damage, leaving me with {hp} HP!";
@@ -180,13 +182,15 @@ module.exports.useMove = function(moveName, callback) {
               stateMachine.endBattle(function(){
                 callback({"text": "I beat you!"});
               })
+              gameOver = true;
               return;
             }
             npc_textString += "It did {dmg} damage, leaving you with {hp} HP!";
             npc_textString = npc_textString.replace("{dmg}", Math.ceil(d.power/5));
             npc_textString = npc_textString.replace("{hp}", d1);
             msgs_array.push(npc_textString);
-            callback({"text": msgs_array.join("\n")})             
+            if(!gameOver)
+              callback({"text": msgs_array.join("\n")})             
           })
         } else {
           callback({"text": "weird"}) 
