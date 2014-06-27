@@ -46,3 +46,13 @@ module.exports.endBattle = function(callback) {
     callback(data);
   });
 }
+
+module.exports.addMove = function(moveName) {
+  redis.sadd("user:allowedMoves", moveName);
+}
+
+module.exports.getMoves = function(callback) {
+  redis.smembers("user:allowedMoves", function(err, data){
+    callback(data);
+  });
+}
