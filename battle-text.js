@@ -1,5 +1,6 @@
 var pokeapi = require('./poke-api.js')
 var stateMachine = require('./state-machine.js')
+var moves = require('./move-types.js')
 
 //+ Jonas Raoni Soares Silva
 //@ http://jsfromhell.com/array/shuffle [v1.0]
@@ -98,11 +99,13 @@ module.exports.endBattle = function(callback) {
 }
 
 module.exports.useMove = function(moveName, callback) {
-  var textString = "You used {movename}."
+  var textString = "You used {movename}. The type is {type}."
   stateMachine.getMoves(function(data){
     console.log(data);
     console.log(moveName);
     if(data.indexOf(moveName) !== -1) {
+      var type = moves.getMoveType(moveName);
+      textString = textString.replace("{type}", type);
       callback({"text": textString.replace("{movename}", moveName)})
     } else {
       callback({"text": "You can't use that move."})
