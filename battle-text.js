@@ -109,9 +109,13 @@ module.exports.useMove = function(moveName, callback) {
     if(data.indexOf(moveName) !== -1) {
       stateMachine.getSingleMove(moveName, function(d){
         console.log("returned from getSingleMove:" + JSON.stringify(d))
-        var type = d.type||"something weird";
-        textString = textString.replace("{type}", type);
-        callback({"text": textString.replace("{movename}", moveName)})        
+        if(!d) {
+          var type = d.type;
+          textString = textString.replace("{type}", type);
+          callback({"text": textString.replace("{movename}", moveName)}) 
+        } else {
+          callback({"text": "weird")}) 
+        }       
       })
     } else {
       callback({"text": "You can't use that move."})
