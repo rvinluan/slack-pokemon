@@ -69,7 +69,7 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
 }
 
 module.exports.startBattle = function(slackData, callback) {
-  textString = "OK {name}, I'll battle you!".replace("{name}", slackData.user_name)
+  textString = "OK {name}, I'll battle you! ".replace("{name}", slackData.user_name)
   stateMachine.newBattle(slackData.user_name, slackData.channel_name, function(data) {
     if(data.error) {
       //There's already a battle. Get data and then stop.
@@ -81,7 +81,7 @@ module.exports.startBattle = function(slackData, callback) {
     } else {
       var dex_no = Math.ceil(Math.random() * 151);
       module.exports.choosePokemon(dex_no, function(data) {
-        textString += "I'll choose " + data.name;
+        textString += "I'll choose " + data.name + "!";
         callback({
           text: textString,
           spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
