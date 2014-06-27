@@ -87,7 +87,7 @@ module.exports.npcChoosePokemon = function(dex_no, callback) {
     for(var i = 0; i < 4; i++) {
       //add the moves to allowed moves set.
       pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri, function(data) {
-        stateMachine.addMoveNPC(data);
+        stateMachine.addMoveNPC(data, function(){ /*do nothing*/ });
       })
     }
     textString = textString.replace("{pkmnn}", data.name);
