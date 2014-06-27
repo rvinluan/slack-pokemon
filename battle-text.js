@@ -52,7 +52,9 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
     for(var i = 0; i < 4; i++) {
       //add the moves to allowed moves set.
       pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri, function(data) {
-        stateMachine.addMove(data);
+        stateMachine.addMove(data, function(){
+          console.log("response from addMove " + data);
+        });
       })
       if(i < 3) {
         textString += moves[i].name;

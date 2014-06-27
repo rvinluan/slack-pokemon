@@ -49,12 +49,14 @@ module.exports.endBattle = function(callback) {
   });
 }
 
-module.exports.addMove = function(data) {
+module.exports.addMove = function(data, callback) {
   console.log("single move before putting in: " + data)
   redis.sadd("user:allowedMoves", data.name.toLowerCase());
   redis.hmset("move:"+data.name.toLowerCase(), {
     "power": data.power,
     "type": moves.getMoveType(data.name.toLowerCase())
+  }, function(data){
+    callback(data)
   })
 }
 
