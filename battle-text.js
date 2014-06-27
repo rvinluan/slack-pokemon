@@ -103,15 +103,15 @@ module.exports.endBattle = function(callback) {
 }
 
 module.exports.useMove = function(moveName, callback) {
-  var textString = "You used {movename}. The type is {type}."
+  var textString = "You used {movename}. The type is {type}, and the power is {power}"
   stateMachine.getUserAllowedMoves(function(data){
     //console.log("is " +moveName+ " in " + data);
     if(data.indexOf(moveName) !== -1) {
       stateMachine.getSingleMove(moveName, function(d){
         //console.log("returned from getSingleMove:" + JSON.stringify(d))
         if(d) {
-          var type = d.type;
-          textString = textString.replace("{type}", type);
+          textString = textString.replace("{type}", d.type);
+          textString = textString.replace("{power}", d.power);
           callback({"text": textString.replace("{movename}", moveName)}) 
         } else {
           callback({"text": "weird"}) 
