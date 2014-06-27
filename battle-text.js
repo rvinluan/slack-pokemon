@@ -137,11 +137,23 @@ module.exports.useMove = function(moveName, callback) {
       stateMachine.getSingleMove(moveName, function(d){
         //console.log("returned from getSingleMove:" + JSON.stringify(d))
         if(d) {
-          textString = textString.replace("{type}", d.type);
-          textString = textString.replace("{power}", d.power);
+          //textString = textString.replace("{type}", d.type);
+          //textString = textString.replace("{power}", d.power);
           textString = textString.replace("{movename}", moveName);
-          msgs_array.push(textString);
-          //then the npc goes
+          stateMachine.doDamageToNpc(Math.ceil(d.power/5));
+          stateMachine.getNpcHP(function(err, d1) {
+            if(d1 <= 0) {
+              stateMachine.endBattle(function(){
+                callback({"text": "You beat me!"})
+                return;
+              })
+            }
+            npc_textString += "It did {dmg} damage, leaving me with {hp} HP!";
+            npc_textString = npc_textString.replace("{dmg}", d.power);
+            npc_textString = npc_textString.replace("{hp}", d1);
+            msgs_array.push(npc_textString);
+            //then the npc goes
+          }) 
         } else {
           callback({"text": "weird"}) 
         }       
@@ -152,19 +164,25 @@ module.exports.useMove = function(moveName, callback) {
   });
 
   //then I go
-  var npc_textString = "Use {movename}! Its type is {type} and its power is {power}"
+  var npc_textString = "I use {movename}! "
   stateMachine.getNpcAllowedMoves(function(data){
     //choose a random move
     var npc_moveName = data[Math.floor(Math.random() * data.length)];
     stateMachine.getSingleMove(npc_moveName, function(d){
         //console.log("returned from getSingleMove:" + JSON.stringify(d))
         if(d) {
-          npc_textString = npc_textString.replace("{type}", d.type);
-          npc_textString = npc_textString.replace("{power}", d.power);
+          //npc_textString = npc_textString.replace("{type}", d.type);
+          //npc_textString = npc_textString.replace("{power}", d.power);
           npc_textString = npc_textString.replace("{movename}", npc_moveName);
-          stateMachine.doDamageToUser(Math.ceil(d.power/10));
+          stateMachine.doDamageToUser(Math.ceil(d.power/5));
           stateMachine.getUserHP(function(err, d1) {
-            npc_textString += "It did {dmg}, leaving you with {hp} HP!";
+            if(d1 <= 0) {
+              stateMachine.endBattle(function(){
+                callback({"text": "I beat you!"})
+                return;
+              })
+            }
+            npc_textString += "It did {dmg} damage, leaving you with {hp} HP!";
             npc_textString = npc_textString.replace("{dmg}", d.power);
             npc_textString = npc_textString.replace("{hp}", d1);
             msgs_array.push(npc_textString);
