@@ -97,9 +97,13 @@ module.exports.endBattle = function(callback) {
   stateMachine.endBattle(callback);
 }
 
-module.exports.useMove = function(callback) {
+module.exports.useMove = function(moveName, callback) {
+  var textString = "You used {movename}."
   stateMachine.getMoves(function(data){
-    console.log(data);
-    callback({"text": "used a move"})
+    if(data.indexOf(moveName) !== -1) {
+      callback({"text": textString.replace("{movename}", moveName)})
+    } else {
+      callback({"text": "You can't use that move."})
+    }
   });
 }
