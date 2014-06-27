@@ -75,6 +75,32 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
 
 }
 
+module.exports.npcChoosePokemon = function(commandsArray, callback) {
+  var commandString = commandsArray.join(" "),
+      pokemonName = commandsArray[3],
+      textString = "I'll use {pkmnn}!",
+      moves = [];
+  module.exports.choosePokemon(pokemonName, function(data){
+    if(data.error) {
+      callback(data.text)
+      return;
+    }
+    moves = shuffle(data.moves);
+    for(var i = 0; i < 4; i++) {
+      //add the moves to allowed moves set.
+      pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri, function(data) {
+        stateMachine.addMoveNPC(data);
+      })
+    }
+    textString = textString.replace("{pkmnn}", data.name);
+    callback({
+      text: textString,
+      spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
+    })
+  });
+
+}
+
 module.exports.startBattle = function(slackData, callback) {
   textString = "OK {name}, I'll battle you! ".replace("{name}", slackData.user_name)
   stateMachine.newBattle(slackData.user_name, slackData.channel_name, function(data) {
@@ -87,11 +113,10 @@ module.exports.startBattle = function(slackData, callback) {
       });
     } else {
       var dex_no = Math.ceil(Math.random() * 151);
-      module.exports.choosePokemon(dex_no, function(data) {
-        textString += "I'll choose " + data.name + "!";
+      module.exports.npcChoosePokemon(dex_no, function(data) {
         callback({
-          text: textString,
-          spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
+          text: textString +"\n"+ data.textString,
+          spriteUrl: data.spriteUrl
         })
       }); 
     }
@@ -103,6 +128,7 @@ module.exports.endBattle = function(callback) {
 }
 
 module.exports.useMove = function(moveName, callback) {
+  //first you go
   var textString = "You used {movename}. The type is {type}, and the power is {power}"
   stateMachine.getUserAllowedMoves(function(data){
     //console.log("is " +moveName+ " in " + data);
@@ -112,7 +138,8 @@ module.exports.useMove = function(moveName, callback) {
         if(d) {
           textString = textString.replace("{type}", d.type);
           textString = textString.replace("{power}", d.power);
-          callback({"text": textString.replace("{movename}", moveName)}) 
+          textString = textString.replace("{movename}", moveName);
+          //then the npc goes
         } else {
           callback({"text": "weird"}) 
         }       
@@ -121,4 +148,26 @@ module.exports.useMove = function(moveName, callback) {
       callback({"text": "You can't use that move."})
     }
   });
+
+  //then I go
+  var textString2 = "Use {movename}! Its type is {type} and its power is {power}"
+  stateMachine.getNpcAllowedMoves(function(data){
+    //choose a random move
+    var npc_moveName = data[Math.floor(Math.random() * data.length())];
+    stateMachine.getSingleMove(npc_moveName, function(d){
+        //console.log("returned from getSingleMove:" + JSON.stringify(d))
+        if(d) {
+          textString2 = textString2.replace("{type}", d.type);
+          textString2 = textString2.replace("{power}", d.power);
+          textString2 = textString2.replace("{movename}", npc_moveName);
+          callback({"text": textString + "\n" + textString2)}) 
+        } else {
+          callback({"text": "weird"}) 
+        }       
+      })
+    } else {
+      callback({"text": "Whoops I picked a weird move."})
+    }
+  });
+
 }

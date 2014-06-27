@@ -61,8 +61,25 @@ module.exports.addMove = function(data, callback) {
     })
 }
 
+module.exports.addMoveNPC = function(data, callback) {
+  console.log("about to put in the move "+data.name.toLowerCase())
+  redis.sadd("npc:allowedMoves", data.name.toLowerCase());
+  redis.hmset("move:"+data.name.toLowerCase(), 
+    "power", data.power , 
+    "type", moves.getMoveType(data.name.toLowerCase()), 
+    function(err, d){
+      console.log('this should mean hmset is done with '+data.name);
+      callback(d)
+    })
+}
+
 module.exports.getUserAllowedMoves = function(callback) {
   redis.smembers("user:allowedMoves", function(err, data){
+    callback(data);
+  });
+}
+module.exports.getUserAllowedMoves = function(callback) {
+  redis.smembers("npc:allowedMoves", function(err, data){
     callback(data);
   });
 }
