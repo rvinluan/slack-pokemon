@@ -53,8 +53,8 @@ module.exports.addMove = function(data) {
   console.log("single move before putting in: " + data)
   redis.sadd("user:allowedMoves", data.name.toLowerCase());
   redis.hmset("move:"+data.name.toLowerCase(), {
-    power: data.power,
-    type: moves.getMoveType(data.name)
+    "power": data.power,
+    "type": moves.getMoveType(data.name.toLowerCase())
   })
 }
 
