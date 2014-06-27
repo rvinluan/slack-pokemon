@@ -51,7 +51,7 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
     //vine whip, leer, solar beam, and tackle.
     for(var i = 0; i < 4; i++) {
       //add the moves to allowed moves set.
-      pokeapi.getMove(moves[i].resource_uri, function(data) {
+      pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri, function(data) {
         stateMachine.addMove(data);
       })
       if(i < 3) {

@@ -32,5 +32,15 @@ module.exports.getSprite = function(url, callback) {
 }
 
 module.exports.getMove = function(url, callback) {
-
+  request(url, function (error, response, body) {
+    if (response.statusCode == 404) {
+      callback.call(this, {"error": "failed to get move"});
+    }
+    else if (response.statusCode == 200) {
+      callback.call(this, JSON.parse(body));
+    }
+    else {
+      callback.call(this, {"error": "weird error"})
+    }
+  })
 }
