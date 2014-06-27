@@ -41,7 +41,9 @@ module.exports.getBattle = function(callback) {
 }
 
 module.exports.endBattle = function(callback) {
-  redis.del(["currentBattle", "user:allowedMoves"], function(err, data) {
+  redis.del(
+    ["currentBattle", "user:allowedMoves", "npc:allowedMoves"], 
+    function(err, data) {
     if(err) {
       //nope.
     }
@@ -89,4 +91,12 @@ module.exports.getSingleMove = function(moveName, callback) {
     //console.log(moveName + " after getting out: " + JSON.stringify(data))
     callback(data);
   })
+}
+
+module.exports.setNpcHP = function(hp) {
+  redis.set("npc:hp", hp);
+}
+
+module.exports.setUserHP = function(hp) {
+  redis.set("user:hp", hp);
 }

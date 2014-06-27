@@ -65,6 +65,7 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
         textString += ".";
       }
     }
+    stateMachine.setUserHP(data.hp);
     textString = textString.replace("{pkmnn}", data.name);
     textString = textString.replace("{hp}", data.hp);
     callback({
@@ -90,6 +91,7 @@ module.exports.npcChoosePokemon = function(dex_no, callback) {
         stateMachine.addMoveNPC(data, function(){ /*do nothing*/ });
       })
     }
+    stateMachine.setNpcHP(data.hp);
     textString = textString.replace("{pkmnn}", data.name);
     callback({
       text: textString,
