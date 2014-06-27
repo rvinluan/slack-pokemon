@@ -178,7 +178,7 @@ module.exports.useMove = function(moveName, callback) {
           stateMachine.getUserHP(function(err, d1) {
             if(parseInt(d1, 10) <= 0) {
               stateMachine.endBattle(function(){
-                callback({"text": "I beat you!"})
+                callback({"text": "I beat you!"});
                 return;
               })
             }
