@@ -145,11 +145,11 @@ module.exports.useMove = function(moveName, callback) {
             if(parseInt(d1, 10) <= 0) {
               stateMachine.endBattle(function(){
                 callback({"text": "You beat me!"})
-                return;
               })
+              return;
             }
             textString += "It did {dmg} damage, leaving me with {hp} HP!";
-            textString = textString.replace("{dmg}", d.power);
+            textString = textString.replace("{dmg}", Math.ceil(d.power/5));
             textString = textString.replace("{hp}", d1);
             msgs_array.push(textString);
             //then the npc goes
@@ -179,11 +179,11 @@ module.exports.useMove = function(moveName, callback) {
             if(parseInt(d1, 10) <= 0) {
               stateMachine.endBattle(function(){
                 callback({"text": "I beat you!"});
-                return;
               })
+              return;
             }
             npc_textString += "It did {dmg} damage, leaving you with {hp} HP!";
-            npc_textString = npc_textString.replace("{dmg}", d.power);
+            npc_textString = npc_textString.replace("{dmg}", Math.ceil(d.power/5));
             npc_textString = npc_textString.replace("{hp}", d1);
             msgs_array.push(npc_textString);
             callback({"text": msgs_array.join("\n")})             
