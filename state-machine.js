@@ -39,7 +39,7 @@ module.exports.getBattle = function(callback) {
 }
 
 module.exports.endBattle = function(callback) {
-  redis.del("currentBattle", function(err, data) {
+  redis.del("currentBattle user:allowedMoves", function(err, data) {
     if(err) {
       //nope.
     }
