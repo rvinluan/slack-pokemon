@@ -160,7 +160,7 @@ module.exports.useMove = function(moveName, callback) {
           textString2 = textString2.replace("{type}", d.type);
           textString2 = textString2.replace("{power}", d.power);
           textString2 = textString2.replace("{movename}", npc_moveName);
-          callback({"text": textString + "\n" + textString2)}) 
+          callback({"text": textString + "\n" + textString2}) 
         } else {
           callback({"text": "weird"}) 
         }       
