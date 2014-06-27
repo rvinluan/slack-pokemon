@@ -148,10 +148,10 @@ module.exports.useMove = function(moveName, callback) {
                 return;
               })
             }
-            npc_textString += "It did {dmg} damage, leaving me with {hp} HP!";
-            npc_textString = npc_textString.replace("{dmg}", d.power);
-            npc_textString = npc_textString.replace("{hp}", d1);
-            msgs_array.push(npc_textString);
+            textString += "It did {dmg} damage, leaving me with {hp} HP!";
+            textString = textString.replace("{dmg}", d.power);
+            textString = textString.replace("{hp}", d1);
+            msgs_array.push(textString);
             //then the npc goes
           }) 
         } else {
