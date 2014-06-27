@@ -79,9 +79,14 @@ module.exports.startBattle = function(slackData, callback) {
         })
       });
     } else {
-      callback({
-        text: textString
-      })
+      var dex_no = Math.ceil(Math.random() * 151);
+      module.exports.getPokemon(dex_no, function(data) {
+        textString += "I'll choose " + data.name;
+        callback({
+          text: textString,
+          spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
+        })
+      }); 
     }
   })
 }

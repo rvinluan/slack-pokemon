@@ -30,7 +30,7 @@ app.post('/commands', function(request, response){
   }
   else if(matchCommands(commands, "START")) {
     battleText.startBattle(request.body, function(obj){
-      slack.sendSlackPost({"text":obj.text})
+      slack.sendSlackPost({"text":obj.text + obj.spriteUrl})
     })
   }
   else if(matchCommands(commands, "END")) {
