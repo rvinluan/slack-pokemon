@@ -142,7 +142,7 @@ module.exports.useMove = function(moveName, callback) {
           textString = textString.replace("{movename}", moveName);
           stateMachine.doDamageToNpc(Math.ceil(d.power/5));
           stateMachine.getNpcHP(function(err, d1) {
-            if(d1 <= 0) {
+            if(parseInt(d1, 10) <= 0) {
               stateMachine.endBattle(function(){
                 callback({"text": "You beat me!"})
                 return;
@@ -176,7 +176,7 @@ module.exports.useMove = function(moveName, callback) {
           npc_textString = npc_textString.replace("{movename}", npc_moveName);
           stateMachine.doDamageToUser(Math.ceil(d.power/5));
           stateMachine.getUserHP(function(err, d1) {
-            if(d1 <= 0) {
+            if(parseInt(d1, 10) <= 0) {
               stateMachine.endBattle(function(){
                 callback({"text": "I beat you!"})
                 return;
