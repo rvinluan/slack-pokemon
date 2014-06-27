@@ -128,6 +128,7 @@ module.exports.endBattle = function(callback) {
 }
 
 module.exports.useMove = function(moveName, callback) {
+  var msgs_array = [];
   //first you go
   var textString = "You used {movename}. The type is {type}, and the power is {power}"
   stateMachine.getUserAllowedMoves(function(data){
@@ -139,6 +140,7 @@ module.exports.useMove = function(moveName, callback) {
           textString = textString.replace("{type}", d.type);
           textString = textString.replace("{power}", d.power);
           textString = textString.replace("{movename}", moveName);
+          msgs_array.push(textString);
           //then the npc goes
         } else {
           callback({"text": "weird"}) 
@@ -150,17 +152,24 @@ module.exports.useMove = function(moveName, callback) {
   });
 
   //then I go
-  var textString2 = "Use {movename}! Its type is {type} and its power is {power}"
+  var npc_textString = "Use {movename}! Its type is {type} and its power is {power}"
   stateMachine.getNpcAllowedMoves(function(data){
     //choose a random move
     var npc_moveName = data[Math.floor(Math.random() * data.length)];
     stateMachine.getSingleMove(npc_moveName, function(d){
         //console.log("returned from getSingleMove:" + JSON.stringify(d))
         if(d) {
-          textString2 = textString2.replace("{type}", d.type);
-          textString2 = textString2.replace("{power}", d.power);
-          textString2 = textString2.replace("{movename}", npc_moveName);
-          callback({"text": textString + "\n" + textString2}) 
+          npc_textString = npc_textString.replace("{type}", d.type);
+          npc_textString = npc_textString.replace("{power}", d.power);
+          npc_textString = npc_textString.replace("{movename}", npc_moveName);
+          stateMachine.decrby("user:hp", Math.ceil(d.power/10));
+          stateMachine.get("user:hp", function(err, d1) {
+            npc_textString += "It did {dmg}, leaving you with {hp} HP!";
+            npc_textString = npc_textString.replace("{dmg}", d.power);
+            npc_textString = npc_textString.replace("{hp}", d1);
+            msgs_array.push(npc_textString);
+            callback({"text": msgs_array.join("\n")})             
+          })
         } else {
           callback({"text": "weird"}) 
         }       

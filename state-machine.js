@@ -42,7 +42,7 @@ module.exports.getBattle = function(callback) {
 
 module.exports.endBattle = function(callback) {
   redis.del(
-    ["currentBattle", "user:allowedMoves", "npc:allowedMoves"], 
+    ["currentBattle", "user:allowedMoves", "npc:allowedMoves", "npc:hp", "user:hp"], 
     function(err, data) {
     if(err) {
       //nope.
