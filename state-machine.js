@@ -52,7 +52,7 @@ module.exports.endBattle = function(callback) {
 module.exports.addMove = function(data) {
   console.log("single move before putting in: " + data)
   redis.sadd("user:allowedMoves", data.name.toLowerCase());
-  redis.hmset("move:"+data.name, {
+  redis.hmset("move:"+data.name.toLowerCase(), {
     power: data.power,
     type: moves.getMoveType(data.name)
   })
