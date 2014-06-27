@@ -162,8 +162,8 @@ module.exports.useMove = function(moveName, callback) {
           npc_textString = npc_textString.replace("{type}", d.type);
           npc_textString = npc_textString.replace("{power}", d.power);
           npc_textString = npc_textString.replace("{movename}", npc_moveName);
-          stateMachine.decrby("user:hp", Math.ceil(d.power/10));
-          stateMachine.get("user:hp", function(err, d1) {
+          stateMachine.doDamageToUser(Math.ceil(d.power/10));
+          stateMachine.getUserHP(function(err, d1) {
             npc_textString += "It did {dmg}, leaving you with {hp} HP!";
             npc_textString = npc_textString.replace("{dmg}", d.power);
             npc_textString = npc_textString.replace("{hp}", d1);

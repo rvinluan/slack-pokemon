@@ -96,7 +96,19 @@ module.exports.getSingleMove = function(moveName, callback) {
 module.exports.setNpcHP = function(hp) {
   redis.set("npc:hp", hp);
 }
+module.exports.getNpcHP = function(callback) {
+  redis.get("npc:hp", callback);
+}
 
 module.exports.setUserHP = function(hp) {
   redis.set("user:hp", hp);
+}
+module.exports.getUserHP = function(callback) {
+  redis.get("user:hp", callback);
+}
+module.exports.doDamageToUser = function(damage) {
+  redis.decrby("user:hp", damage);
+}
+module.exports.doDamageToNpc = function(damage) {
+  redis.decrby("npc:hp", damage);
 }
