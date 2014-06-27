@@ -78,7 +78,7 @@ module.exports.getUserAllowedMoves = function(callback) {
     callback(data);
   });
 }
-module.exports.getUserAllowedMoves = function(callback) {
+module.exports.getNpcAllowedMoves = function(callback) {
   redis.smembers("npc:allowedMoves", function(err, data){
     callback(data);
   });
