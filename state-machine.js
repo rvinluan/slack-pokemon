@@ -51,7 +51,7 @@ module.exports.endBattle = function(callback) {
 
 module.exports.addMove = function(data) {
   console.log("single move before putting in: " + data)
-  redis.sadd("user:allowedMoves", data.name);
+  redis.sadd("user:allowedMoves", data.name.toLowerCase());
   redis.hmset("move:"+data.name, {
     power: data.power,
     type: moves.getMoveType(data.name)
