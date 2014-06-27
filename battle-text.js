@@ -109,7 +109,7 @@ module.exports.useMove = function(moveName, callback) {
     if(data.indexOf(moveName) !== -1) {
       stateMachine.getSingleMove(moveName, function(d){
         console.log("returned from getSingleMove:" + JSON.stringify(d))
-        if(!d) {
+        if(d) {
           var type = d.type;
           textString = textString.replace("{type}", type);
           callback({"text": textString.replace("{movename}", moveName)}) 
