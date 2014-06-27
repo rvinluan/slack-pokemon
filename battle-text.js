@@ -165,9 +165,6 @@ module.exports.useMove = function(moveName, callback) {
           callback({"text": "weird"}) 
         }       
       })
-    } else {
-      callback({"text": "Whoops I picked a weird move."})
-    }
   });
 
 }
