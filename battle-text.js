@@ -75,12 +75,10 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
 
 }
 
-module.exports.npcChoosePokemon = function(commandsArray, callback) {
-  var commandString = commandsArray.join(" "),
-      pokemonName = commandsArray[3],
-      textString = "I'll use {pkmnn}!",
+module.exports.npcChoosePokemon = function(dex_no, callback) {
+  var textString = "I'll use {pkmnn}!",
       moves = [];
-  module.exports.choosePokemon(pokemonName, function(data){
+  module.exports.choosePokemon(dex_no, function(data){
     if(data.error) {
       callback(data.text)
       return;
