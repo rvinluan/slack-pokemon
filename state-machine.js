@@ -57,8 +57,14 @@ module.exports.addMove = function(data) {
   })
 }
 
-module.exports.getMoves = function(callback) {
+module.exports.getUserAllowedMoves = function(callback) {
   redis.smembers("user:allowedMoves", function(err, data){
     callback(data);
   });
+}
+
+module.exports.getSingleMove = function(moveName, callback) {
+  redis.hgetall("user:move:"+moveName, function(data){
+    callback(data);
+  })
 }

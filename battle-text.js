@@ -102,11 +102,13 @@ module.exports.endBattle = function(callback) {
 
 module.exports.useMove = function(moveName, callback) {
   var textString = "You used {movename}. The type is {type}."
-  stateMachine.getMoves(function(data){
+  stateMachine.getUserAllowedMoves(function(data){
     if(data.indexOf(moveName) !== -1) {
-      var type = moves.getMoveType(moveName);
-      textString = textString.replace("{type}", type);
-      callback({"text": textString.replace("{movename}", moveName)})
+      stateMachine.getSingleMove(moveName, function(d){
+        var type = d.type;
+        textString = textString.replace("{type}", type);
+        callback({"text": textString.replace("{movename}", moveName)})        
+      })
     } else {
       callback({"text": "You can't use that move."})
     }
