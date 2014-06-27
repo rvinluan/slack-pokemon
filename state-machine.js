@@ -50,6 +50,7 @@ module.exports.endBattle = function(callback) {
 }
 
 module.exports.addMove = function(data) {
+  console.log("single move before putting in: " + data)
   redis.sadd("user:allowedMoves", data.name);
   redis.hmset("user:move:"+data.name, {
     power: data.power,
@@ -65,6 +66,7 @@ module.exports.getUserAllowedMoves = function(callback) {
 
 module.exports.getSingleMove = function(moveName, callback) {
   redis.hgetall("user:move:"+moveName, function(data){
+    console.log("single move after getting out: " + data)
     callback(data);
   })
 }
