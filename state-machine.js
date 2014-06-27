@@ -52,10 +52,13 @@ module.exports.endBattle = function(callback) {
 module.exports.addMove = function(data, callback) {
   console.log("about to put in the move "+data.name.toLowerCase())
   redis.sadd("user:allowedMoves", data.name.toLowerCase());
-  redis.hmset("move:"+data.name.toLowerCase(), "power", data.power , "type", moves.getMoveType(data.name.toLowerCase()), function(d){
-    console.log('this should mean hmset is done with '+data.name);
-    callback(d)
-  })
+  redis.hmset("move:"+data.name.toLowerCase(), 
+    "power", data.power , 
+    "type", moves.getMoveType(data.name.toLowerCase()), 
+    function(d){
+      console.log('this should mean hmset is done with '+data.name);
+      callback(d)
+    })
 }
 
 module.exports.getUserAllowedMoves = function(callback) {
