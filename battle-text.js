@@ -101,8 +101,6 @@ module.exports.endBattle = function(callback) {
 module.exports.useMove = function(moveName, callback) {
   var textString = "You used {movename}. The type is {type}."
   stateMachine.getMoves(function(data){
-    console.log(data);
-    console.log(moveName);
     if(data.indexOf(moveName) !== -1) {
       var type = moves.getMoveType(moveName);
       textString = textString.replace("{type}", type);
