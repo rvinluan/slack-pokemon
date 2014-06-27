@@ -54,8 +54,8 @@ module.exports.addMove = function(data, callback) {
   redis.sadd("user:allowedMoves", data.name.toLowerCase());
   redis.hmset("move:oneMove", 
     "power", data.power , 
-    "type", "grass", 
-    function(d){
+    "type", moves.getMoveType(data.name.toLowerCase()), 
+    function(err, d){
       console.log('this should mean hmset is done with '+data.name);
       callback(d)
     })
@@ -68,7 +68,7 @@ module.exports.getUserAllowedMoves = function(callback) {
 }
 
 module.exports.getSingleMove = function(moveName, callback) {
-  redis.hgetall("move:oneMove", function(data){
+  redis.hgetall("move:oneMove", function(err, data){
     //console.log(moveName + " after getting out: " + JSON.stringify(data))
     callback(data);
   })
