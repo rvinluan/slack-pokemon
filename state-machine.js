@@ -52,9 +52,9 @@ module.exports.endBattle = function(callback) {
 module.exports.addMove = function(data, callback) {
   console.log("about to put in the move "+data.name.toLowerCase())
   redis.sadd("user:allowedMoves", data.name.toLowerCase());
-  redis.hmset("move:"+data.name.toLowerCase(), 
+  redis.hmset("move:oneMove", 
     "power", data.power , 
-    "type", moves.getMoveType(data.name.toLowerCase()), 
+    "type", "grass", 
     function(d){
       console.log('this should mean hmset is done with '+data.name);
       callback(d)
@@ -68,7 +68,7 @@ module.exports.getUserAllowedMoves = function(callback) {
 }
 
 module.exports.getSingleMove = function(moveName, callback) {
-  redis.hgetall("move:"+moveName.toLowerCase(), function(data){
+  redis.hgetall("move:oneMove", function(data){
     //console.log(moveName + " after getting out: " + JSON.stringify(data))
     callback(data);
   })
