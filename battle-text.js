@@ -114,7 +114,7 @@ module.exports.useMove = function(moveName, callback) {
           textString = textString.replace("{type}", type);
           callback({"text": textString.replace("{movename}", moveName)}) 
         } else {
-          callback({"text": "weird")}) 
+          callback({"text": "weird"}) 
         }       
       })
     } else {
