@@ -1,3 +1,5 @@
+var moves = require('./move-types.js');
+
 var redis,
     rtg;
 
@@ -47,8 +49,12 @@ module.exports.endBattle = function(callback) {
   });
 }
 
-module.exports.addMove = function(moveName) {
-  redis.sadd("user:allowedMoves", moveName);
+module.exports.addMove = function(data) {
+  redis.sadd("user:allowedMoves", data.name);
+  redis.hmset("user:move:"+data.name, {
+    power: data.power,
+    type: moves.getMoveType(data.name)
+  })
 }
 
 module.exports.getMoves = function(callback) {
