@@ -23,34 +23,34 @@ app.get('/', function(request, response) {
 app.post('/commands', function(request, response){
   var commands = request.body.text.toLowerCase().split(" "),
       bt;
-  response.writeHead(200, {"Content-Type": "application/json"});
+  //response.writeHead(200, {"Content-Type": "application/json"});
   if(matchCommands(commands, "CHOOSE")) {
     battleText.userChoosePokemon(commands, function(obj){
-      response.write(JSON.stringify({"text":obj.text + "\n" + obj.spriteUrl}));
+      response.end(JSON.stringify({"text":obj.text + "\n" + obj.spriteUrl}));
     });
   }
   else if(matchCommands(commands, "ATTACK")) {
     battleText.useMove(commands[2], function(obj){
-      response.write(JSON.stringify({"text": obj.text}))
+      response.end(JSON.stringify({"text": obj.text}))
     })
   }
   else if(matchCommands(commands, "START")) {
     battleText.startBattle(request.body, function(obj){
       if(obj.spriteUrl) {
-        response.write(JSON.stringify({"text":obj.text + "\n" + obj.spriteUrl}))
+        response.end(JSON.stringify({"text":obj.text + "\n" + obj.spriteUrl}))
       } else {
-        response.write(JSON.stringify({"text":obj.text}))        
+        response.end(JSON.stringify({"text":obj.text}))        
       }
     })
   }
   else if(matchCommands(commands, "END")) {
     battleText.endBattle(function(d){
-      response.write(JSON.stringify({"text":"Battle over."}))
+      response.end(JSON.stringify({"text":"Battle over."}))
     })
   }
   else {
     battleText.unrecognizedCommand(commands, function(text){
-      response.write(JSON.stringify({"text":text}));
+      response.end(JSON.stringify({"text":text}));
     });
   }
 })
@@ -70,7 +70,6 @@ function matchCommands(commandArray, command) {
   }
   //get rid of the 'pkmn'
   var cmdString = commandArray.join(" ").toLowerCase().replace("pkmn ", "");
-  console.log(cmdString);
   return cmdString.indexOf(commandsDict[command]) === 0
 
 }
