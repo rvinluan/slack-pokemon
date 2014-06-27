@@ -40,7 +40,7 @@ app.post('/commands', function(request, response){
     } else {
       moveName = commands[2]
     }
-    battleText.useMove(moveName, function(obj){
+    battleText.useMove(moveName.toLowerCase(), function(obj){
       response.end(buildResponse(obj.text));
     })
   }
