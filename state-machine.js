@@ -87,7 +87,7 @@ module.exports.getNpcAllowedMoves = function(callback) {
 }
 
 module.exports.getSingleMove = function(moveName, callback) {
-  redis.hgetall("move:"+moveName.toLowerCase(), function(err, data){
+  redis.hgetall("move:"+moveName, function(err, data){
     //console.log(moveName + " after getting out: " + JSON.stringify(data))
     callback(data);
   })
