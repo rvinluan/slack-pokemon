@@ -66,7 +66,7 @@ module.exports.getUserAllowedMoves = function(callback) {
 
 module.exports.getSingleMove = function(moveName, callback) {
   redis.hgetall("move:"+moveName.toLowerCase(), function(data){
-    console.log(moveName + " after getting out: " + JSON.stringify(data))
+    //console.log(moveName + " after getting out: " + JSON.stringify(data))
     callback(data);
   })
 }

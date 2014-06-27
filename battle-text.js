@@ -53,7 +53,7 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
       //add the moves to allowed moves set.
       pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri, function(data) {
         stateMachine.addMove(data, function(d){
-          console.log("response from addMove " + JSON.stringify(d));
+          console.log("response from adding the move " + data.name + ": " + JSON.stringify(d));
         });
       })
       if(i < 3) {
@@ -105,10 +105,10 @@ module.exports.endBattle = function(callback) {
 module.exports.useMove = function(moveName, callback) {
   var textString = "You used {movename}. The type is {type}."
   stateMachine.getUserAllowedMoves(function(data){
-    console.log("is " +moveName+ " in " + data);
+    //console.log("is " +moveName+ " in " + data);
     if(data.indexOf(moveName) !== -1) {
       stateMachine.getSingleMove(moveName, function(d){
-        console.log("returned from getSingleMove:" + JSON.stringify(d))
+        //console.log("returned from getSingleMove:" + JSON.stringify(d))
         if(d) {
           var type = d.type;
           textString = textString.replace("{type}", type);
