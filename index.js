@@ -26,20 +26,30 @@ app.post('/commands', function(request, response){
   //response.writeHead(200, {"Content-Type": "application/json"});
   if(matchCommands(commands, "CHOOSE")) {
     battleText.userChoosePokemon(commands, function(obj){
-      response.end(buildResponse(obj.text + "\n" + obj.spriteUrl));
+      if(obj.spriteUrl) {
+        response.end(buildResponse("I don't thinkt that's a real Pokemon."));
+      } else {
+        response.end(buildResponse(obj.text));
+      }
     });
   }
   else if(matchCommands(commands, "ATTACK")) {
-    battleText.useMove(commands[2], function(obj){
+    var moveName;
+    if(commands[3]) {
+      moveName = commands[2] + "-" + commands[3];
+    } else {
+      moveName = commands[2]
+    }
+    battleText.useMove(moveName, function(obj){
       response.end(buildResponse(obj.text));
     })
   }
   else if(matchCommands(commands, "START")) {
     battleText.startBattle(request.body, function(obj){
       if(obj.spriteUrl) {
-      response.end(buildResponse(obj.text + "\n" + obj.spriteUrl));
+        response.end(buildResponse(obj.text + "\n" + obj.spriteUrl));
       } else {
-      response.end(buildResponse(obj.text));
+        response.end(buildResponse(obj.text));
       }
     })
   }

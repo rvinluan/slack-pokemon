@@ -30,3 +30,7 @@ module.exports.getSprite = function(url, callback) {
     }
   })
 }
+
+module.exports.getMove = function(moveName, callback) {
+  
+}
