@@ -113,7 +113,7 @@ module.exports.startBattle = function(slackData, callback) {
       var dex_no = Math.ceil(Math.random() * 151);
       module.exports.npcChoosePokemon(dex_no, function(data) {
         callback({
-          text: textString +"\n"+ data.textString,
+          text: textString +"\n"+ data.text,
           spriteUrl: data.spriteUrl
         })
       }); 
