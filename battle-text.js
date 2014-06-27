@@ -151,7 +151,7 @@ module.exports.useMove = function(moveName, callback) {
   var textString2 = "Use {movename}! Its type is {type} and its power is {power}"
   stateMachine.getNpcAllowedMoves(function(data){
     //choose a random move
-    var npc_moveName = data[Math.floor(Math.random() * data.length())];
+    var npc_moveName = data[Math.floor(Math.random() * data.length)];
     stateMachine.getSingleMove(npc_moveName, function(d){
         //console.log("returned from getSingleMove:" + JSON.stringify(d))
         if(d) {
