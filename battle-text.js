@@ -130,7 +130,7 @@ module.exports.endBattle = function(callback) {
 module.exports.useMove = function(moveName, callback) {
   var msgs_array = [];
   //first you go
-  var textString = "You used {movename}. The type is {type}, and the power is {power}"
+  var textString = "You used {movename}. "
   stateMachine.getUserAllowedMoves(function(data){
     //console.log("is " +moveName+ " in " + data);
     if(data.indexOf(moveName) !== -1) {
