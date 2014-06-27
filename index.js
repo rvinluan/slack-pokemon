@@ -26,8 +26,8 @@ app.post('/commands', function(request, response){
   //response.writeHead(200, {"Content-Type": "application/json"});
   if(matchCommands(commands, "CHOOSE")) {
     battleText.userChoosePokemon(commands, function(obj){
-      if(obj.spriteUrl) {
-        response.end(buildResponse("I don't thinkt that's a real Pokemon."));
+      if(!obj.spriteUrl) {
+        response.end(buildResponse("I don't think that's a real Pokemon."));
       } else {
         response.end(buildResponse(obj.text));
       }
