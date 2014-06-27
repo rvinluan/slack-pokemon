@@ -100,6 +100,8 @@ module.exports.endBattle = function(callback) {
 module.exports.useMove = function(moveName, callback) {
   var textString = "You used {movename}."
   stateMachine.getMoves(function(data){
+    console.log(data);
+    console.log(moveName);
     if(data.indexOf(moveName) !== -1) {
       callback({"text": textString.replace("{movename}", moveName)})
     } else {
