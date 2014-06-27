@@ -29,7 +29,7 @@ app.post('/commands', function(request, response){
       if(!obj.spriteUrl) {
         response.end(buildResponse("I don't think that's a real Pokemon."));
       } else {
-        response.end(buildResponse(obj.text));
+        response.end(buildResponse(obj.text + "\n" + obj.SpriteUrl));
       }
     });
   }
