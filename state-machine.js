@@ -1,4 +1,5 @@
-var moves = require('./move-types.js');
+var moves = require('./move-types.js'),
+    Q = require('q');
 
 var redis,
     rtg;
@@ -13,102 +14,127 @@ if(process.env.REDISTOGO_URL) {
   redis = require("redis").createClient();
 }
 
+/* TURN REDIS METHODS INTO PROMISE-RETURNING ONES */
+
+QRedis = {};
+
+QRedis.sadd = Q.nbind(redis.sadd, redis);
+QRedis.hmset = Q.nbind(redis.hmset, redis);
+QRedis.hgetall = Q.nbind(redis.hgetall, redis);
+QRedis.exists = Q.nbind(redis.exists, redis);
+QRedis.del = Q.nbind(redis.del, redis);
+QRedis.set = Q.nbind(redis.set, redis);
+QRedis.get = Q.nbind(redis.get, redis);
+QRedis.decrby = Q.nbind(redis.decrby, redis);
+QRedis.smembers = Q.nbind(redis.smembers, redis);
+
 
 module.exports = {};
 
-module.exports.newBattle = function(playerName, channel, callback) {
-  redis.exists("currentBattle", function(err, data) {
-    if(data === 0) {
-      redis.hmset("currentBattle", {
-        "playerName": playerName,
-        "channel": channel
-      }, function(e, d){
-        callback({data: d});
-      });
-    } else {
-      callback({error: "battle exists!"})
-    }
-  })
-}
-
-module.exports.getBattle = function(callback) {
-  redis.hgetall("currentBattle", function(err, obj){
-    if(err) {
-      callback({error: "didn't work."})
-    }
-    callback(obj);
-  })
-}
-
-module.exports.endBattle = function(callback) {
-  redis.del(
-    ["currentBattle", "user:allowedMoves", "npc:allowedMoves", "npc:hp", "user:hp"], 
-    function(err, data) {
-    if(err) {
-      //nope.
-    }
-    callback(data);
-  });
-}
-
-module.exports.addMove = function(data, callback) {
-  console.log("about to put in the move "+data.name.toLowerCase())
-  redis.sadd("user:allowedMoves", data.name.toLowerCase());
-  redis.hmset("move:"+data.name.toLowerCase(), 
-    "power", data.power , 
-    "type", moves.getMoveType(data.name.toLowerCase()), 
-    function(err, d){
-      console.log('this should mean hmset is done with '+data.name);
-      callback(d)
+module.exports.newBattle = function(playerName, channel) {
+  return QRedis.exists("currentBattle")
+    .then(function(exists){
+      if(!exists) {
+        return QRedis.hmset("currentBattle", {
+          "playerName": playerName,
+          "channel": channel
+        })
+      } else {
+        throw new Error("Battle Exists")
+      }
     })
 }
 
-module.exports.addMoveNPC = function(data, callback) {
-  console.log("about to put in the move "+data.name.toLowerCase())
-  redis.sadd("npc:allowedMoves", data.name.toLowerCase());
-  redis.hmset("move:"+data.name.toLowerCase(), 
-    "power", data.power , 
-    "type", moves.getMoveType(data.name.toLowerCase()), 
-    function(err, d){
-      console.log('this should mean hmset is done with '+data.name);
-      callback(d)
-    })
+module.exports.getBattle = function() {
+  return QRedis.hgetall("currentBattle");
 }
 
-module.exports.getUserAllowedMoves = function(callback) {
-  redis.smembers("user:allowedMoves", function(err, data){
-    callback(data);
-  });
-}
-module.exports.getNpcAllowedMoves = function(callback) {
-  redis.smembers("npc:allowedMoves", function(err, data){
-    callback(data);
-  });
+module.exports.endBattle = function() {
+  return QRedis.del([
+    "currentBattle",
+    "user:allowedMoves",
+    "npc:allowedMoves",
+    "npc:hp",
+    "user:hp",
+    "user:pkmnTypes",
+    "npc:pkmnTypes"
+  ])
 }
 
-module.exports.getSingleMove = function(moveName, callback) {
-  redis.hgetall("move:"+moveName.toLowerCase(), function(err, data){
-    //console.log(moveName + " after getting out: " + JSON.stringify(data))
-    callback(data);
-  })
+module.exports.addMove = function(data) {
+  return QRedis.sadd("user:allowedMoves", data.name.toLowerCase())
+    .then(function(addReturned){
+      return QRedis.hmset("move:"+data.name.toLowerCase(),{
+        "power": data.power,
+        "type": moves.getMoveType(data.name.toLowerCase())
+      })
+    });
+}
+
+module.exports.addMoveNPC = function(data) {
+  return QRedis.sadd("npc:allowedMoves", data.name.toLowerCase())
+    .then(function(addReturned){
+      return QRedis.hmset("move:"+data.name.toLowerCase(),{
+        "power": data.power,
+        "type": moves.getMoveType(data.name.toLowerCase())
+      })
+    });
+}
+
+module.exports.setUserPkmnTypes = function(typesArray) {
+  //TODO: use apply (or Q's version of it)
+  if(typesArray[1]) {
+    return QRedis.sadd("user:pkmnTypes", typesArray[0], typesArray[1]);
+  } else {
+    return QRedis.sadd("user:pkmnTypes", typesArray[0]);
+  }
+}
+
+module.exports.setNpcPkmnTypes = function(typesArray) {
+  //TODO: use apply (or Q's version of it)
+  console.log("npc's pkmn types: "+typesArray);
+  if(typesArray[1]) {
+    return QRedis.sadd("npc:pkmnTypes", typesArray[0], typesArray[1]);
+  } else {
+    return QRedis.sadd("npc:pkmnTypes", typesArray[0]);
+  }
+}
+
+module.exports.getUserPkmnTypes = function() {
+  return QRedis.smembers("user:pkmnTypes");
+}
+
+module.exports.getNpcPkmnTypes = function() {
+  return QRedis.smembers("npc:pkmnTypes");
+}
+
+module.exports.getUserAllowedMoves = function() {
+  return QRedis.smembers("user:allowedMoves");
+}
+module.exports.getNpcAllowedMoves = function() {
+  return QRedis.smembers("npc:allowedMoves");
+}
+
+module.exports.getSingleMove = function(moveName) {
+  return QRedis.hgetall("move:"+moveName.toLowerCase());
 }
 
 module.exports.setNpcHP = function(hp) {
-  redis.set("npc:hp", hp);
+  return QRedis.set("npc:hp", hp);
 }
-module.exports.getNpcHP = function(callback) {
-  redis.get("npc:hp", callback);
+module.exports.getNpcHP = function() {
+  return QRedis.get("npc:hp");
 }
 
 module.exports.setUserHP = function(hp) {
-  redis.set("user:hp", hp);
+  return QRedis.set("user:hp", hp);
 }
-module.exports.getUserHP = function(callback) {
-  redis.get("user:hp", callback);
+module.exports.getUserHP = function() {
+  return QRedis.get("user:hp");
 }
 module.exports.doDamageToUser = function(damage) {
-  redis.decrby("user:hp", damage);
+  return QRedis.decrby("user:hp", damage);
 }
 module.exports.doDamageToNpc = function(damage) {
-  redis.decrby("npc:hp", damage);
+  return QRedis.decrby("npc:hp", damage);
 }

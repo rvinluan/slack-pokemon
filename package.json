@@ -28,5 +28,8 @@
   "contributors": [
     "Zeke Sikelianos <zeke@sikelianos.com> (http://zeke.sikelianos.com)"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "q": "^1.0.1"
+  }
 }

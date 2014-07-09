@@ -1,6 +1,7 @@
-var pokeapi = require('./poke-api.js')
-var stateMachine = require('./state-machine.js')
-var moves = require('./move-types.js')
+var pokeapi = require('./poke-api.js'),
+    stateMachine = require('./state-machine.js'),
+    moves = require('./move-types.js'),
+    Q = require('q');
 
 //+ Jonas Raoni Soares Silva
 //@ http://jsfromhell.com/array/shuffle [v1.0]
@@ -11,51 +12,37 @@ function shuffle(o){ //v1.0
 
 module.exports = {}
 
-module.exports.unrecognizedCommand = function(commandsArray, callback) {
-  var textString = "I don't recognize the command _{cmd}_ . Try <http://rv-slack-pokemon.herokuapp.com> for help.";
+module.exports.unrecognizedCommand = function(commandsArray) {
+  var textString = "I don't recognize the command _{cmd}_ .";
   commandsArray.shift(); //get rid of the 'pkmn'
   textString = textString.replace("{cmd}", commandsArray.join(" "));
-  callback.call(this, textString);
+  return Q.fcall(function(){ return textString; });
 }
 
-module.exports.choosePokemon = function(pokemonName, callback) {
-  pokeapi.getPokemon(pokemonName, function(data){
-    if(data.error) {
-      callback({
-        error: "pokemon didn't exist",
-        text: "I don't think that's a real pokemon."
-      })
-      return;
-    }
-
-    callback(data)
+module.exports.choosePokemon = function(pokemonName) {
+  return pokeapi.getPokemon(pokemonName).then(function(pkmnData){
+    return pkmnData;
   });
 }
 
-module.exports.userChoosePokemon = function(commandsArray, callback) {
+module.exports.userChoosePokemon = function(commandsArray) {
   var commandString = commandsArray.join(" "),
       pokemonName = commandsArray[3],
       textString = "You chose {pkmnn}. It has {hp} HP, and knows ",
-      moves = [];
+      moves = [],
+      movePromises = [];
   //validate that the command was "pkmn i choose {pokemon}"
   if(!commandString.match(/i choose/i)) {
-    module.exports.unrecognizedCommand(commandsArray, callback);
-    return;
+    return module.exports.unrecognizedCommand(commandsArray);
   }
-  module.exports.choosePokemon(pokemonName, function(data){
-    if(data.error) {
-      callback(data.text)
-      return;
-    }
-    moves = shuffle(data.moves);
-    //vine whip, leer, solar beam, and tackle.
+  return module.exports.choosePokemon(pokemonName).then(function(pkmndata){
+    moves = shuffle(pkmndata.moves);
     for(var i = 0; i < 4; i++) {
-      //add the moves to allowed moves set.
-      pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri, function(data) {
-        stateMachine.addMove(data, function(d){
-          console.log("response from adding the move " + data.name + ": " + JSON.stringify(d));
-        });
-      })
+      movePromises.push(
+        pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri)
+        .then(stateMachine.addMove)
+      )
+      //format: "vine whip, leer, solar beam, and tackle."
       if(i < 3) {
         textString += moves[i].name;
         textString += ", ";
@@ -65,137 +52,177 @@ module.exports.userChoosePokemon = function(commandsArray, callback) {
         textString += ".";
       }
     }
-    stateMachine.setUserHP(data.hp);
-    textString = textString.replace("{pkmnn}", data.name);
-    textString = textString.replace("{hp}", data.hp);
-    callback({
-      text: textString,
-      spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
+    return Q.allSettled(movePromises)
+    .then(function(){
+      return stateMachine.setUserHP(pkmndata.hp);
     })
+    .then(function(){
+      return stateMachine.setUserPkmnTypes(pkmndata.types.map(function(val){
+        return val.name;
+      }));
+    })
+    .then(function(){
+      textString = textString.replace("{pkmnn}", pkmndata.name);
+      textString = textString.replace("{hp}", pkmndata.hp);
+      return {
+        text: textString,
+        spriteUrl: "http://pokeapi.co/media/img/"+pkmndata.pkdx_id+".png"
+      }
+    });    
   });
 
 }
 
-module.exports.npcChoosePokemon = function(dex_no, callback) {
+module.exports.npcChoosePokemon = function(dex_no) {
   var textString = "I'll use {pkmnn}!",
-      moves = [];
-  module.exports.choosePokemon(dex_no, function(data){
-    if(data.error) {
-      callback(data.text)
-      return;
-    }
-    moves = shuffle(data.moves);
+      moves = [],
+      movePromises = [];
+  return module.exports.choosePokemon(dex_no).then(function(pkmnData){
+    moves = shuffle(pkmnData.moves);
     for(var i = 0; i < 4; i++) {
-      //add the moves to allowed moves set.
-      pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri, function(data) {
-        stateMachine.addMoveNPC(data, function(){ /*do nothing*/ });
-      })
+      movePromises.push(
+        pokeapi.getMove("http://pokeapi.co"+moves[i].resource_uri)
+        .then(stateMachine.addMoveNPC)
+      )
     }
-    stateMachine.setNpcHP(data.hp);
-    textString = textString.replace("{pkmnn}", data.name);
-    callback({
-      text: textString,
-      spriteUrl: "http://pokeapi.co/media/img/"+data.pkdx_id+".png"
+    return Q.allSettled(movePromises)
+    .then(function(){
+      return stateMachine.setNpcHP(pkmnData.hp);
     })
+    .then(function(){
+      return stateMachine.setNpcPkmnTypes(pkmnData.types.map(function(val){
+        return val.name;
+      }));
+    })
+    .then(function(){
+        textString = textString.replace("{pkmnn}", pkmnData.name);
+        return {
+          text: textString,
+          spriteUrl: "http://pokeapi.co/media/img/"+pkmnData.pkdx_id+".png"
+        }
+    });    
   });
-
 }
 
-module.exports.startBattle = function(slackData, callback) {
-  textString = "OK {name}, I'll battle you! ".replace("{name}", slackData.user_name)
-  stateMachine.newBattle(slackData.user_name, slackData.channel_name, function(data) {
-    if(data.error) {
-      //There's already a battle. Get data and then stop.
-      stateMachine.getBattle(function(d){
-        callback({
-          text: "Sorry, I'm already in a battle in #" + d.channel
-        })
-      });
-    } else {
-      var dex_no = Math.ceil(Math.random() * 151);
-      module.exports.npcChoosePokemon(dex_no, function(data) {
-        callback({
-          text: textString +"\n"+ data.text,
-          spriteUrl: data.spriteUrl
-        })
-      }); 
+module.exports.startBattle = function(slackData) {
+  var textString = "OK {name}, I'll battle you! ".replace("{name}", slackData.user_name),
+      dex_no = Math.ceil(Math.random() * 151);
+  return stateMachine.newBattle(slackData.user_name, slackData.channel_name)
+  .then(function() {
+    return module.exports.npcChoosePokemon(dex_no); 
+  })
+  .then(function(pkmnChoice){
+    return {
+      text: textString + '\n' + pkmnChoice.text,
+      spriteUrl: pkmnChoice.spriteUrl
     }
   })
 }
 
-module.exports.endBattle = function(callback) {
-  stateMachine.endBattle(callback);
+module.exports.endBattle = function() {
+  return stateMachine.endBattle();
 }
 
-module.exports.useMove = function(moveName, callback) {
-  var msgs_array = [],
-      gameOver = false;;
-  //first you go
-  var textString = "You used {movename}. "
-  stateMachine.getUserAllowedMoves(function(data){
-    //console.log("is " +moveName+ " in " + data);
-    if(data.indexOf(moveName) !== -1) {
-      stateMachine.getSingleMove(moveName, function(d){
-        //console.log("returned from getSingleMove:" + JSON.stringify(d))
-        if(d) {
-          //textString = textString.replace("{type}", d.type);
-          //textString = textString.replace("{power}", d.power);
-          textString = textString.replace("{movename}", moveName);
-          stateMachine.doDamageToNpc(Math.ceil(d.power/5));
-          stateMachine.getNpcHP(function(err, d1) {
-            if(parseInt(d1, 10) <= 0) {
-              stateMachine.endBattle(function(){
-                callback({"text": "You beat me!"})
-              })
-              gameOver = true;
-              return;
-            }
-            textString += "It did {dmg} damage, leaving me with {hp} HP!";
-            textString = textString.replace("{dmg}", Math.ceil(d.power/5));
-            textString = textString.replace("{hp}", d1);
-            msgs_array.push(textString);
-            //then the npc goes
-          }) 
-        } else {
-          callback({"text": "weird"}) 
-        }       
-      })
+var effectivenessMessage = function(mult) {
+  switch(mult) {
+    case 0:
+      return "It doesn't have an effect. ";
+      break;
+    case 0.5:
+    case 0.25:
+      return "It's not very effective... ";
+      break;
+    case 1:
+      return " "
+      break;
+    case 2:
+    case 4:
+      return "It's super effective! ";
+      break;
+    default:
+      return " ";
+      break;
+  }
+}
+
+var useMoveUser = function(moveName) {
+  var textString = "You used {mvname}! {effctv}",
+      textStringDmg = "It did {dmg} damage, leaving me with {hp}HP!";
+  return stateMachine.getUserAllowedMoves()
+  .then(function(moves){
+    if(moves.indexOf(moveName) !== -1) {
+      return stateMachine.getSingleMove(moveName);
     } else {
-      callback({"text": "You can't use that move."})
+      throw new Error("Your pokemon doesn't know that move.");
     }
-  });
+  })
+  .then(function(moveData){
+    textString = textString.replace("{mvname}", moveName);
+    return stateMachine.getNpcPkmnTypes()
+    .then(function(types){
+      return pokeapi.getAttackMultiplier(moveData.type, types[0], types[1])
+      .then(function(multiplier){
+        //do damage
+        var totalDamage = Math.ceil( (moveData.power / 5) * multiplier )
+        return stateMachine.doDamageToNpc(totalDamage)
+        .then(function(hpRemaining){
+          if(parseInt(hpRemaining, 10) <= 0) {
+            return stateMachine.endBattle()
+            .then(function(){
+              return "You Beat Me!";
+            })
+          }
+          textString = textString.replace("{effctv}", effectivenessMessage(multiplier));
+          textStringDmg = textStringDmg.replace("{dmg}", totalDamage);
+          textStringDmg = textStringDmg.replace("{hp}", hpRemaining);
+          if(multiplier == 0)
+            return textString;
+          return textString + textStringDmg; 
+        })
+      });
+    })
+  })
+}
 
-  //then I go
-  var npc_textString = "I use {movename}! "
-  stateMachine.getNpcAllowedMoves(function(data){
-    //choose a random move
-    var npc_moveName = data[Math.floor(Math.random() * data.length)];
-    stateMachine.getSingleMove(npc_moveName, function(d){
-        //console.log("returned from getSingleMove:" + JSON.stringify(d))
-        if(d) {
-          //npc_textString = npc_textString.replace("{type}", d.type);
-          //npc_textString = npc_textString.replace("{power}", d.power);
-          npc_textString = npc_textString.replace("{movename}", npc_moveName);
-          stateMachine.doDamageToUser(Math.ceil(d.power/5));
-          stateMachine.getUserHP(function(err, d1) {
-            if(parseInt(d1, 10) <= 0) {
-              stateMachine.endBattle(function(){
-                callback({"text": "I beat you!"});
-              })
-              gameOver = true;
-              return;
-            }
-            npc_textString += "It did {dmg} damage, leaving you with {hp} HP!";
-            npc_textString = npc_textString.replace("{dmg}", Math.ceil(d.power/5));
-            npc_textString = npc_textString.replace("{hp}", d1);
-            msgs_array.push(npc_textString);
-            if(!gameOver)
-              callback({"text": msgs_array.join("\n")})             
-          })
-        } else {
-          callback({"text": "weird"}) 
-        }       
-      })
-  });
+var useMoveNpc = function() {
+  var textString = "I used {mvname}! {effctv}",
+      textStringDmg = "It did {dmg} damage, leaving you with {hp}HP!",
+      randMove = Math.floor(Math.random() * 4);
+  return stateMachine.getNpcAllowedMoves()
+  .then(function(moves){
+    textString = textString.replace("{mvname}", moves[randMove]);
+    return stateMachine.getSingleMove(moves[randMove]);
+  })
+  .then(function(moveData){
+    return stateMachine.getUserPkmnTypes()
+    .then(function(types){
+      return pokeapi.getAttackMultiplier(moveData.type, types[0], types[1])
+      .then(function(multiplier){
+        //do damage
+        var totalDamage = Math.ceil( (moveData.power / 5) * multiplier )
+        return stateMachine.doDamageToUser(totalDamage)
+        .then(function(hpRemaining){
+          if(parseInt(hpRemaining, 10) <= 0) {
+            return stateMachine.endBattle()
+            .then(function(){
+              return "You Lost!";
+            })
+          }
+          textString = textString.replace("{effctv}", effectivenessMessage(multiplier));
+          textStringDmg = textStringDmg.replace("{dmg}", totalDamage);
+          textStringDmg = textStringDmg.replace("{hp}", hpRemaining);
+          if(multiplier == 0)
+            return textString;
+          return textString + textStringDmg; 
+        })
+      });
+    })
+  })
+}
 
+module.exports.useMove = function(moveName) {
+  return Q.all([useMoveNpc(), useMoveUser(moveName)])
+  .then(function(results){
+    return results[0] + '\n' + results[1];
+  })
 }

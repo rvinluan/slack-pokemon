@@ -25,42 +25,63 @@ app.post('/commands', function(request, response){
       bt;
   //response.writeHead(200, {"Content-Type": "application/json"});
   if(matchCommands(commands, "CHOOSE")) {
-    battleText.userChoosePokemon(commands, function(obj){
-      if(!obj.spriteUrl) {
-        response.end(buildResponse("I don't think that's a real Pokemon."));
-      } else {
-        response.end(buildResponse(obj.text + "\n" + obj.spriteUrl));
+    battleText.userChoosePokemon(commands)
+    .then(
+      function(chosenObject){
+        response.send(buildResponse(chosenObject.text + '\n' + chosenObject.spriteUrl));
+      },
+      function(err){
+        console.log(err);
+        response.send(buildResponse("I don't think that's a real Pokemon."));
       }
-    });
+    )
   }
   else if(matchCommands(commands, "ATTACK")) {
     var moveName;
     if(commands[3]) {
-      moveName = commands[2] + "-" + commands[3];
+      //remove 'pkmn use' so it's just the move name
+      moveName = commands.slice(2).join('-');
     } else {
-      moveName = commands[2]
+      moveName = commands[2];
     }
-    battleText.useMove(moveName.toLowerCase(), function(obj){
-      response.end(buildResponse(obj.text));
-    })
+    battleText.useMove(moveName.toLowerCase())
+    .then(
+      function(textString){
+        response.end(buildResponse(textString ));
+      },
+      function(err){
+        console.log(err);
+        response.send(buildResponse("You can't use that move."))
+      }
+    )
   }
   else if(matchCommands(commands, "START")) {
-    battleText.startBattle(request.body, function(obj){
-      if(obj.spriteUrl) {
-        response.end(buildResponse(obj.text + "\n" + obj.spriteUrl));
-      } else {
-        response.end(buildResponse(obj.text));
+    battleText.startBattle(request.body)
+    .then(
+      function(startObj){
+        response.send(buildResponse(startObj.text + "\n" + startObj.spriteUrl))
+      },
+      function(err) {
+        console.log(err);
+        response.send(buildResponse("Something went wrong."));
       }
-    })
+    )
   }
   else if(matchCommands(commands, "END")) {
-    battleText.endBattle(function(d){
-      response.end(buildResponse("Battle Over."));
-    })
+    battleText.endBattle()
+    .then(
+      function(){
+        response.send(buildResponse("Battle Over."))
+      },
+      function(err){
+        console.log(err);
+        response.send(buildResponse("Couldn't end the battle."))
+      }
+    )
   }
   else {
-    battleText.unrecognizedCommand(commands, function(text){
-      response.end(buildResponse(text));
+    battleText.unrecognizedCommand(commands).then(function(text){
+      response.send(buildResponse(text));
     });
   }
 })

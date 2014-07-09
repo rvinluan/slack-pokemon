@@ -1,46 +1,97 @@
-var request = require('request')
+var request = require('request'),
+    Q = require('q');
 
 module.exports = {}
 
-module.exports.getPokemon = function(name, callback) {
+module.exports.getPokemon = function(name) {
+  var deferred = Q.defer();
   request("http://pokeapi.co/api/v1/pokemon/"+name, function (error, response, body) {
     if (response.statusCode == 404) {
-      callback.call(this, {"error": "failed to get pokemon"});
+      deferred.reject(new Error("404 - Couldn't find Pokemon"));
     }
     else if (response.statusCode == 200) {
-      callback.call(this, JSON.parse(body));
+      deferred.resolve(JSON.parse(body));
     }
     else {
-      callback.call(this, {"error": "weird error"})
+      deferred.reject(new Error("Weird Error Getting Pokemon"));
     }
   })
+  return deferred.promise;
 }
 
-module.exports.getSprite = function(url, callback) {
-  console.log('getting sprite at ' + url)
+module.exports.getSprite = function(url) {
+  var deferred = Q.defer();
   request(url, function (error, response, body) {
     if (response.statusCode == 404) {
-      callback.call(this, {"error": "failed to get sprite"});
+      deferred.reject(new Error("404 - Failed to Find Sprite"))
     }
     else if (response.statusCode == 200) {
-      callback.call(this, JSON.parse(body));
+      deferred.resolve(JSON.parse(body));
     }
     else {
-      callback.call(this, {"error": "weird error"})
+      deferred.reject(new Error("Weird Error Getting Sprite"));
     }
   })
+  return deferred.promise;
 }
 
-module.exports.getMove = function(url, callback) {
+module.exports.getMove = function(url) {
+  var deferred = Q.defer();
   request(url, function (error, response, body) {
     if (response.statusCode == 404) {
-      callback.call(this, {"error": "failed to get move"});
+      deferred.reject(new Error("404 - Failed to Find Move"))
     }
     else if (response.statusCode == 200) {
-      callback.call(this, JSON.parse(body));
+      deferred.resolve(JSON.parse(body));
     }
     else {
-      callback.call(this, {"error": "weird error"})
+      deferred.reject(new Error("Weird Error Getting Move"));
     }
   })
+  return deferred.promise;
+}
+
+module.exports.getAttackMultiplier = function(offensive, defensive1, defensive2) {
+  var multiplier = 1,
+      typesArray = [
+        "normal", //1
+        "fighting",
+        "flying",
+        "poison",
+        "ground",
+        "rock",
+        "bug",
+        "ghost",
+        "steel",
+        "fire",
+        "water",
+        "grass",
+        "electric",
+        "psychic",
+        "ice",
+        "dragon",
+        "dark",
+        "fairy" //18
+      ],
+      typeID = typesArray.indexOf(offensive.toLowerCase()) + 1,
+      deferred = Q.defer();
+  console.log("checking type advantage: "+offensive, defensive1, defensive2);
+  request("http://pokeapi.co/api/v1/type/"+typeID, function(error, response, body){
+    if(response.statusCode == 200) {
+      var d = JSON.parse(body),
+          ineffective = d.ineffective.map(function(val){return val.name}),
+          noeffect = d.no_effect.map(function(val){return val.name}),
+          supereffective = d.super_effective.map(function(val){return val.name});
+      [defensive1, defensive2].forEach(function(type){
+        if(ineffective.indexOf(type) !== -1) { multiplier *= 0.5; }
+        if(noeffect.indexOf(type) !== -1) { multiplier *= 0; }
+        if(supereffective.indexOf(type) !== -1) { multiplier *= 2; }
+      });
+      deferred.resolve(multiplier);
+    } else {
+      deferred.reject(new Error("Error accessing API while getting type."));
+    }
+  })
+
+  return deferred.promise;
 }
