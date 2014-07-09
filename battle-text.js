@@ -223,6 +223,12 @@ var useMoveNpc = function() {
 module.exports.useMove = function(moveName) {
   return Q.all([useMoveNpc(), useMoveUser(moveName)])
   .then(function(results){
-    return results[0] + '\n' + results[1];
+    if(results[1] === "You Beat Me!") {
+      return results[1];
+    } else if (results[0] === "You Lost!") {
+      return results[0];
+    } else {
+      return results[1] + "\n" + results[0];
+    }
   })
 }
