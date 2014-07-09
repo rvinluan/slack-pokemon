@@ -74,7 +74,7 @@ module.exports.userChoosePokemon = function(commandsArray) {
 }
 
 module.exports.npcChoosePokemon = function(dex_no) {
-  var textString = "I'll use {pkmnn}!",
+  var textString = "I Choose {pkmnn}!",
       moves = [],
       movePromises = [];
   return module.exports.choosePokemon(dex_no).then(function(pkmnData){
