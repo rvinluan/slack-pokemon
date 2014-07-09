@@ -10,7 +10,8 @@
     "express": "^4.0.0",
     "body-parser": "*",
     "request": "*",
-    "redis": ">= 0.10.3"
+    "redis": ">= 0.10.3",
+    "q": "^1.0.1"
   },
   "engines": {
     "node": "0.10.x"
