@@ -32,7 +32,7 @@ app.post('/commands', function(request, response){
       },
       function(err){
         console.log(err);
-        response.send(buildResponse("I don't think that's a real Pokemon."));
+        response.send(buildResponse("I don't think that's a real Pokemon. "+err));
       }
     )
   }
@@ -51,7 +51,7 @@ app.post('/commands', function(request, response){
       },
       function(err){
         console.log(err);
-        response.send(buildResponse("You can't use that move."))
+        response.send(buildResponse("You can't use that move. "+err))
       }
     )
   }
@@ -63,7 +63,7 @@ app.post('/commands', function(request, response){
       },
       function(err) {
         console.log(err);
-        response.send(buildResponse("Something went wrong."));
+        response.send(buildResponse("Something went wrong. "+err));
       }
     )
   }
@@ -75,7 +75,7 @@ app.post('/commands', function(request, response){
       },
       function(err){
         console.log(err);
-        response.send(buildResponse("Couldn't end the battle."))
+        response.send(buildResponse("Couldn't end the battle. "+err))
       }
     )
   }
