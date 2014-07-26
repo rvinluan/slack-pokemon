@@ -1,7 +1,6 @@
 {
-  "name": "Node.js Sample",
-  "description": "A barebones Node.js app using Express 4",
-  "repository": "https://github.com/heroku/node-js-sample",
-  "logo": "http://node-js-sample.herokuapp.com/node.svg",
-  "keywords": ["node", "express", "static"]
+  "name": "Slack Pokemon",
+  "description": "A bot for having Pokemon battles in Slack.",
+  "repository": "https://github.com/rvinluan/slack-pokemon",
+  "keywords": ["node", "express", "static", "pokemon", "battle", "slack"]
 }
