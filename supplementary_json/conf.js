@@ -1,17 +1,20 @@
-pjs.config({ 
-    // options: 'stdout', 'file' (set in config.logFile) or 'none'
+/*
+* This is a PJScrape config file.
+* more on PJScrape here: http://nrabinowitz.github.io/pjscrape/
+* I use this to scrape supplementary information from websites that PokeAPI doesn't have.
+* Currently it's just move types but it can be used for more things, 
+* like whether moves are physical or special.
+*/
+
+pjs.config({
     log: 'stdout',
-    // options: 'json' or 'csv'
     format: 'json',
-    // options: 'stdout' or 'file' (set in config.outFile)
     writer: 'file',
-    outFile: 'scrape_output.json'
+    outFile: 'move_types.json'
 });
 
 pjs.addSuite({
-    // single URL or array
     url: 'http://veekun.com/dex/moves/search?sort=name&introduced_in=1&introduced_in=2&introduced_in=3&introduced_in=4&introduced_in=5&introduced_in=6',
-    // single function or array, evaluated in the client
     scraper: function() {
         return $('.dex-pokemon-moves tr').map(function(index, elem){
           var ro = {}
