@@ -86,4 +86,4 @@ If you end up needing to scrape a page for supplemental data, please take a look
 
 ##Contact
 
-Feel free to message me on Twitter, [@RobertVinluan](twitter.com/robertvinluan). For now I'm making small updates but not adding features. If you would like to add a feature please submit a pull request. I promise I'll look at it (and probably approve it)!
+Feel free to message me on Twitter, [@RobertVinluan](http://twitter.com/robertvinluan). For now I'm making small updates but not adding features. If you would like to add a feature please submit a pull request. I promise I'll look at it (and probably approve it)!
