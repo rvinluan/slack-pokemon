@@ -6,14 +6,10 @@ module.exports = {}
 module.exports.getPokemon = function(name) {
   var deferred = Q.defer();
   request("http://pokeapi.co/api/v1/pokemon/"+name, function (error, response, body) {
-    if (response.statusCode == 404) {
-      deferred.reject(new Error("404 - Couldn't find Pokemon"));
-    }
-    else if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       deferred.resolve(JSON.parse(body));
-    }
-    else {
-      deferred.reject(new Error("Weird Error Getting Pokemon"));
+    } else {
+      deferred.reject(new Error("Error Getting Pokemon"));
     }
   })
   return deferred.promise;
@@ -22,14 +18,10 @@ module.exports.getPokemon = function(name) {
 module.exports.getSprite = function(url) {
   var deferred = Q.defer();
   request(url, function (error, response, body) {
-    if (response.statusCode == 404) {
-      deferred.reject(new Error("404 - Failed to Find Sprite"))
-    }
-    else if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       deferred.resolve(JSON.parse(body));
-    }
-    else {
-      deferred.reject(new Error("Weird Error Getting Sprite"));
+    } else {
+      deferred.reject(new Error("Error Getting Sprite"));
     }
   })
   return deferred.promise;
@@ -38,14 +30,10 @@ module.exports.getSprite = function(url) {
 module.exports.getMove = function(url) {
   var deferred = Q.defer();
   request(url, function (error, response, body) {
-    if (response.statusCode == 404) {
-      deferred.reject(new Error("404 - Failed to Find Move"))
-    }
-    else if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       deferred.resolve(JSON.parse(body));
-    }
-    else {
-      deferred.reject(new Error("Weird Error Getting Move"));
+    } else {
+      deferred.reject(new Error("Error Getting Move"));
     }
   })
   return deferred.promise;
@@ -75,7 +63,6 @@ module.exports.getAttackMultiplier = function(offensive, defensive1, defensive2)
       ],
       typeID = typesArray.indexOf(offensive.toLowerCase()) + 1,
       deferred = Q.defer();
-  console.log("checking type advantage: "+offensive, defensive1, defensive2);
   request("http://pokeapi.co/api/v1/type/"+typeID, function(error, response, body){
     if(response.statusCode == 200) {
       var d = JSON.parse(body),

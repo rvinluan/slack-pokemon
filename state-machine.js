@@ -14,7 +14,7 @@ if(process.env.REDISTOGO_URL) {
   redis = require("redis").createClient();
 }
 
-/* TURN REDIS METHODS INTO PROMISE-RETURNING ONES */
+/* Turn Redis Methods Into Promise-returning Ones */
 
 QRedis = {};
 
@@ -28,7 +28,6 @@ QRedis.get = Q.nbind(redis.get, redis);
 QRedis.decrby = Q.nbind(redis.decrby, redis);
 QRedis.smembers = Q.nbind(redis.smembers, redis);
 
-
 module.exports = {};
 
 module.exports.newBattle = function(playerName, channel) {
@@ -40,7 +39,7 @@ module.exports.newBattle = function(playerName, channel) {
           "channel": channel
         })
       } else {
-        throw new Error("Battle Exists")
+        throw new Error("Battle exists");
       }
     })
 }
@@ -92,7 +91,6 @@ module.exports.setUserPkmnTypes = function(typesArray) {
 
 module.exports.setNpcPkmnTypes = function(typesArray) {
   //TODO: use apply (or Q's version of it)
-  console.log("npc's pkmn types: "+typesArray);
   if(typesArray[1]) {
     return QRedis.sadd("npc:pkmnTypes", typesArray[0], typesArray[1]);
   } else {

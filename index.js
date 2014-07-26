@@ -1,29 +1,37 @@
-var express = require('express')
-var bodyParser = require('body-parser')
+var express = require('express'),
+    bodyParser = require('body-parser'),
+    //Communicate with the PokeAPI
+    pokeapi = require('./poke-api.js'),
+    //Generate messages for different situations
+    battleText = require('./battle-text.js'),
+    //Communicate with Redis
+    stateMachine = require('./state-machine.js'),
+    app = express();
 
-//Communicate with Slack
-var slack = require('./slack-api.js')
-//Communicate with the PokeAPI
-var pokeapi = require('./poke-api.js')
-//Generate messages for different situations
-var battleText = require('./battle-text.js')
-//Talk to Redis to find out what state the batte is in
-var stateMachine = require('./state-machine.js')
-var app = express();
-
-app.set('port', (process.env.PORT || 5000))
-app.use(express.static(__dirname + '/public'))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+app.set('port', (process.env.PORT || 5000));
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function(request, response) {
   response.send('Hello There!')
-})
+});
 
+/*
+* This is the main function that recieves post commands from Slack.
+* They come in this format:
+* {
+*   "text": "pkmn battle me",
+*   "user": "rvinluan",
+*   "channel": "#pkmn_battles" 
+* }
+* There's more stuff but that's all we care about.
+* All error handling is bubbled up to this function and handled here.
+* It doesn't distinguish between different types of errors, but it probably should.
+*/
 app.post('/commands', function(request, response){
-  var commands = request.body.text.toLowerCase().split(" "),
-      bt;
-  //response.writeHead(200, {"Content-Type": "application/json"});
+  var commands = request.body.text.toLowerCase().split(" ");
+
   if(matchCommands(commands, "CHOOSE")) {
     battleText.userChoosePokemon(commands)
     .then(
@@ -39,7 +47,7 @@ app.post('/commands', function(request, response){
   else if(matchCommands(commands, "ATTACK")) {
     var moveName;
     if(commands[3]) {
-      //remove 'pkmn use' so it's just the move name
+      //for moves that are 2+ words, like 'Flare Blitz' or 'Will O Wisp'
       moveName = commands.slice(2).join('-');
     } else {
       moveName = commands[2];
@@ -47,7 +55,7 @@ app.post('/commands', function(request, response){
     battleText.useMove(moveName.toLowerCase())
     .then(
       function(textString){
-        response.end(buildResponse(textString ));
+        response.end(buildResponse(textString));
       },
       function(err){
         console.log(err);
@@ -56,6 +64,7 @@ app.post('/commands', function(request, response){
     )
   }
   else if(matchCommands(commands, "START")) {
+    //send in the whole request.body because it needs the Slack username and channel
     battleText.startBattle(request.body)
     .then(
       function(startObj){
@@ -80,7 +89,8 @@ app.post('/commands', function(request, response){
     )
   }
   else {
-    battleText.unrecognizedCommand(commands).then(function(text){
+    battleText.unrecognizedCommand(commands)
+    .then(function(text){
       response.send(buildResponse(text));
     });
   }
@@ -92,6 +102,11 @@ app.listen(app.get('port'), function() {
 
 //utility functions
 
+/*
+* Helper function to build the JSON to send back to Slack.
+* Make sure to make a custom emoji in your Slack integration named :pkmntrainer:
+* with the included pkmntrainer jpeg, otherwise the profile picture won't work.
+*/
 function buildResponse(text) {
   var json = {
     "text": text,
@@ -101,6 +116,11 @@ function buildResponse(text) {
   return JSON.stringify(json);
 }
 
+/*
+* Helper function to match commands, instead of a switch statement,
+* because then you can do stuff like use Regex here or something fancier.
+* Also keeps all the possible commands and their trigger words in one place.
+*/
 function matchCommands(commandArray, command) {
   var commandsDict = {
     "CHOOSE": "i choose",
@@ -108,8 +128,6 @@ function matchCommands(commandArray, command) {
     "START": "battle me",
     "END": "end battle"
   }
-  //get rid of the 'pkmn'
   var cmdString = commandArray.join(" ").toLowerCase().replace("pkmn ", "");
-  return cmdString.indexOf(commandsDict[command]) === 0
-
+  return cmdString.indexOf(commandsDict[command]) === 0;
 }
