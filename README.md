@@ -47,8 +47,11 @@ To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.
 List of commands:
 
 `pkmn battle me`: starts a battle. chooses a pokemon for the NPC.
+
 `pkmn i choose <pokemon>`: chooses a pokemon for the user. Replies with a list of usable moves.
+
 `pkmn use <attack>`: uses an attack. If the pokemon doesn't know that attack, it will respond with an error. You can type the attack with hyphens (hyper-beam) or with spaces (will o wisp).
+
 `pkmn end battle`: end the battle before someone wins. You can also use this to end battles someone else started but never finished.
 
 ##Features
