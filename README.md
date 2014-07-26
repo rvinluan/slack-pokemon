@@ -20,11 +20,15 @@ Please note that there is some RedisToGo/Heroku specific code in `/state-machine
 
 To run locally, start Redis in a new tab:
 
-`redis_server`
+```Shell
+$ redis_server
+```
 
 and then start the node app:
 
-`npm start`
+```Shell
+$ npm start
+```
 
 This should build dependencies for you and run `index.js`. 
 
