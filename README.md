@@ -1,39 +1,72 @@
-# node-js-sample
+# Slack-Pokemon
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+This is a bot for having Pokemon battles within [Slack](https://slack.com/). It was originally built at Vox Media's product hackathon, [Vax](http://product.voxmedia.com/2014/7/3/5861220/vax-14-the-things-we-built). Read more about it [here](http://www.polygon.com/2014/6/27/5850720/pokemon-battle-slack-vox).
 
-## Running Locally
+Here's an example battle:
 
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
+<img src="http://cdn3.vox-cdn.com/assets/4681633/pkmn_slack.jpg" alt="Example Battle">
 
-```sh
-git clone git@github.com:heroku/node-js-sample.git # or clone your own fork
-cd node-js-sample
-npm install
-npm start
-```
+## Setting up
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+This is written in [Node.js.](http://nodejs.org) After installing Node, you also need to install [npm](https://npmjs.org) and [Redis.](http://redis.io/)
 
-## Deploying to Heroku
+### Spinning up a server
 
-```
-heroku create
-git push heroku master
-heroku open
-```
+I use [Heroku](http://heroku.com). For a guide on setting up Node and Redis with Heroku, check [here](https://devcenter.heroku.com/articles/getting-started-with-nodejs) and [here](https://addons.heroku.com/redistogo). 
 
-Alternatively, you can deploy your own copy of the app using this experimental
-web-based flow:
+Please note that there is some RedisToGo/Heroku specific code in `/state-machine.js`. Don't use that if you're using some other type of server.
 
-[![Deploy on Heroku](https://s3.amazonaws.com/f.cl.ly/items/12030r0c0J3z123k442i/deploy-button.png)](https://clone.herokuapp.com/apps/heroku/node-js-sample)
+### Running locally
 
-## Documentation
+To run locally, start Redis in a new tab:
 
-For more information about using Node.js on Heroku, see these Dev Center articles:
+`redis_server`
 
-- [10 Habits of a Happy Node Hacker](https://blog.heroku.com/archives/2014/3/11/node-habits)
-- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
+and then start the node app:
+
+`npm start`
+
+This should build dependencies for you and run `index.js`. 
+
+Your app should now be running on `localhost:5000`.
+
+To test locally, you'll have to send some POST commands to `localhost:5000/commands`. Here's a one-liner to test starting a battle:
+
+`curl -d {"text":"pkmn battle me"} -H 'Content-Type:application/json' "localhost:5000/commands"`
+
+To test other commands, change the text in the JSON object above.
+
+### On Slack's end
+
+Set up an [Outgoing Webhook Integration](https://my.slack.com/services/new/outgoing-webhook) with the trigger word 'pkmn' that sends  to the URL: `your-url.herokuapp.com/commands/` (or whatever your equivalent URL is if you're not using Heroku). You'll need admin access to your Slack Integration to do this.
+
+To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.slack.com/customize/emoji) with the name ':pkmntrainer:'. The `pkmntrainer.jpg` image is included for your convenience. 
+
+
+##Features
+
+Currently the battle system is a tiny fraction of Pokemon's actual battle system. It supports:
+
+- one battle between a user and an NPC
+- one pokemon per player (of any currently existing pokemon from Bulbasaur to Zygarde. No Volcanion, Diancie, or Hoopa.)
+- moves with appropriate power and type effectiveness (moves can be Super Effective or Not Effective, etc.)
+
+It currently does not support:
+
+- taking stats into account when calculating damage (including accuracy and critical hits)
+- levels, or stats based on levels (including EVs and IVs)
+- ANY non-damaging moves
+- secondary effects of damaging moves (status, buffs/debuffs, multi-hits)
+- items and abilities
+- multiple concurrent battles
+- player vs player battles
+
+###Developing New Features: PJScrape and Supplementary JSON
+
+If you wish to develop new features for this, you will likely run into a situation in which PokeAPI's data isn't sufficient. This happened to me with move types. I ended up scraping the data with [PJScrape](http://nrabinowitz.github.io/pjscrape/) from an external website. The folder `supplemental_json` contains both the scraped data in JSON format as well as the config file passed to PJScrape in order to generate the data.
+
+If you end up needing to scrape a page for supplemental data, please take a look at that folder.
+
+##Contact
+
+Feel free to message me on Twitter, [@RobertVinluan](twitter.com/robertvinluan). For now I'm making small updates but not adding features. If you would like to add a feature please submit a pull request. I promise I'll look at it (and probably approve it)!
