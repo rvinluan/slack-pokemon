@@ -40,8 +40,16 @@ To test other commands, change the text in the JSON object above.
 
 Set up an [Outgoing Webhook Integration](https://my.slack.com/services/new/outgoing-webhook) with the trigger word 'pkmn' that sends  to the URL: `your-url.herokuapp.com/commands/` (or whatever your equivalent URL is if you're not using Heroku). You'll need admin access to your Slack Integration to do this.
 
-To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.slack.com/customize/emoji) with the name ':pkmntrainer:'. The `pkmntrainer.jpg` image is included for your convenience. 
+To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.slack.com/customize/emoji) with the name ':pkmntrainer:'. The `pkmntrainer.jpg` image is included for your convenience.
 
+##How to play 
+
+List of commands:
+
+`pkmn battle me`: starts a battle. chooses a pokemon for the NPC.
+`pkmn i choose <pokemon>`: chooses a pokemon for the user. Replies with a list of usable moves.
+`pkmn use <attack>`: uses an attack. If the pokemon doesn't know that attack, it will respond with an error. You can type the attack with hyphens (hyper-beam) or with spaces (will o wisp).
+`pkmn end battle`: end the battle before someone wins. You can also use this to end battles someone else started but never finished.
 
 ##Features
 
