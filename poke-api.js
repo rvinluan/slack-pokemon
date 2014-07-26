@@ -39,6 +39,14 @@ module.exports.getMove = function(url) {
   return deferred.promise;
 }
 
+/*
+* Calculates the effectiveness of one move on a pokemon with 1 or 2 types.
+* When accessing a move from the API, it will return with three arrays that look like this:
+* "super_effective": [{name:"fairy", resource_uri:"/api/v1/type/18"} ... ]
+* We only care about the name, so we map these arrays to something like:
+* supereffective = ["fairy", "ice", ...]
+* then we can go through and calculate the damage multiplier based on the three arrays.
+*/
 module.exports.getAttackMultiplier = function(offensive, defensive1, defensive2) {
   var multiplier = 1,
       typesArray = [
