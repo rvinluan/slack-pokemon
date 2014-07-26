@@ -32,7 +32,7 @@ Your app should now be running on `localhost:5000`.
 
 To test locally, you'll have to send some POST commands to `localhost:5000/commands`. Here's a one-liner to test starting a battle:
 
-`curl -d {"text":"pkmn battle me"} -H 'Content-Type:application/json' "localhost:5000/commands"`
+`curl -d '{"text":"pkmn battle me"}' -H 'Content-Type:application/json' "localhost:5000/commands"`
 
 To test other commands, change the text in the JSON object above.
 
@@ -40,7 +40,7 @@ To test other commands, change the text in the JSON object above.
 
 Set up an [Outgoing Webhook Integration](https://my.slack.com/services/new/outgoing-webhook) with the trigger word 'pkmn' that sends  to the URL: `your-url.herokuapp.com/commands/` (or whatever your equivalent URL is if you're not using Heroku). You'll need admin access to your Slack Integration to do this.
 
-To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.slack.com/customize/emoji) with the name ':pkmntrainer:'. The `pkmntrainer.jpg` image is included for your convenience.
+To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.slack.com/customize/emoji) with the name ':pkmntrainer:'. The `pkmntrainer.png` image is included for your convenience.
 
 ##How to play 
 
