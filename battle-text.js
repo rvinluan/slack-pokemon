@@ -104,9 +104,10 @@ module.exports.npcChoosePokemon = function(dex_no) {
     })
     .then(function(){
         textString = textString.replace("{pkmnn}", pkmnData.name);
+        var stringy = "" + pkmnData.pkdx_id;
         return {
           text: textString,
-          spriteUrl: "http://sprites.pokecheck.org/i/0"+pkmnData.pkdx_id+".png" + pkmnData.pkdx_id.length
+          spriteUrl: "http://sprites.pokecheck.org/i/0"+pkmnData.pkdx_id+".png" + stringy
         }
     });    
   });
