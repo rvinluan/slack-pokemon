@@ -69,7 +69,7 @@ module.exports.userChoosePokemon = function(commandsArray) {
       textString = textString.replace("{hp}", pkmndata.hp);
       return {
         text: textString,
-        spriteUrl: "http://pokeapi.co/media/img/"+pkmndata.pkdx_id+".png"
+        spriteUrl: "http://sprites.pokecheck.org/i/"+pkmndata.pkdx_id+".gif"
       }
     });    
   });
