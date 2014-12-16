@@ -106,7 +106,7 @@ module.exports.npcChoosePokemon = function(dex_no) {
         textString = textString.replace("{pkmnn}", pkmnData.name);
         return {
           text: textString,
-          spriteUrl: "http://pokeapi.co/media/img/"+pkmnData.pkdx_id+".png"
+          spriteUrl: "http://sprites.pokecheck.org/i/0"+pkmnData.pkdx_id+".png" + pkmnData.pkdx_id.length
         }
     });    
   });
