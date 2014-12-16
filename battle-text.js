@@ -67,9 +67,15 @@ module.exports.userChoosePokemon = function(commandsArray) {
     .then(function(){
       textString = textString.replace("{pkmnn}", pkmndata.name);
       textString = textString.replace("{hp}", pkmndata.hp);
+      var stringy = "" + pkmndata.pkdx_id;
+        if (stringy.length == 1) {
+          stringy = "00" + stringy;
+        } else if (stringy.length == 2) {
+          stringy = "0" + stringy;
+        }
       return {
         text: textString,
-        spriteUrl: "http://sprites.pokecheck.org/i/0"+pkmndata.pkdx_id+".gif"
+        spriteUrl: "http://sprites.pokecheck.org/i/"+stringy+".gif"
       }
     });    
   });
