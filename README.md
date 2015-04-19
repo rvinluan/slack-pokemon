@@ -21,7 +21,7 @@ Please note that there is some RedisToGo/Heroku specific code in `state-machine.
 To run locally, start Redis in a new tab:
 
 ```Shell
-$ redis_server
+$ redis-server
 ```
 
 and then start the node app:
