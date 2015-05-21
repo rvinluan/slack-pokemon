@@ -37,7 +37,7 @@ Your app should now be running on `localhost:5000`.
 To test locally, you'll have to send some POST commands to `localhost:5000/commands`. Here's a one-liner to test starting a battle:
 
 ```Shell
-$ curl -d '{"text":"pkmn battle me"}' -H 'Content-Type:application/json' "localhost:5000/commands"
+curl -X POST -d '{"text":"pkmn battle me"}' -H 'Content-Type:application/json' "localhost:5000/commands"
 ```
 
 To test other commands, change the text in the JSON object above.
