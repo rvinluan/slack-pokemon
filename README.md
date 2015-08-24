@@ -12,7 +12,12 @@ This is written in [Node.js.](http://nodejs.org) After installing Node, you also
 
 ### Spinning up a server
 
-I use [Heroku](http://heroku.com). For a guide on setting up Node and Redis with Heroku, check [here](https://devcenter.heroku.com/articles/getting-started-with-nodejs) and [here](https://addons.heroku.com/redistogo). 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)    
+    
+However, if you would like set up the server manually through [Heroku](https://www.heroku.com/), you can read the following articles:
+    
+- [Node](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
+- [Redis to Go](https://addons.heroku.com/redistogo)
 
 Please note that there is some RedisToGo/Heroku specific code in `state-machine.js`. Don't use that if you're using some other type of server.
 
@@ -30,7 +35,7 @@ and then start the node app:
 $ npm start
 ```
 
-This should build dependencies for you and run `index.js`. 
+This should build dependencies for you and run `index.js`.
 
 Your app should now be running on `localhost:5000`.
 
@@ -44,11 +49,11 @@ To test other commands, change the text in the JSON object above.
 
 ### On Slack's end
 
-Set up an [Outgoing Webhook Integration](https://my.slack.com/services/new/outgoing-webhook) with the trigger word 'pkmn' that sends  to the URL: `your-url.herokuapp.com/commands/` (or whatever your equivalent URL is if you're not using Heroku). You'll need admin access to your Slack Integration to do this.
+Set up an [Outgoing Webhook Integration](https://my.slack.com/services/new/outgoing-webhook) with the trigger word 'pkmn' that sends to the URL: `your-url.herokuapp.com/commands/` (or whatever your equivalent URL is if you're not using Heroku). You'll need admin access to your Slack Integration to do this.
 
 To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.slack.com/customize/emoji) with the name ':pkmntrainer:'. Use the included `pkmntrainer.png` image, or a custom one if you prefer.
 
-##How to play 
+##How to play
 
 List of commands:
 
