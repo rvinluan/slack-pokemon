@@ -3,5 +3,4 @@
   "description": "A bot for having Pokemon battles in Slack.",
   "repository": "https://github.com/rvinluan/slack-pokemon",
   "keywords": ["node", "express", "static", "pokemon", "battle", "slack"],
-  "addons": [ "redistogo" ]
 }
