@@ -15,7 +15,7 @@ if(process.env.REDISTOGO_URL) {
   redis.auth(rtg.auth.split(":")[1]);
 } else {
   //then we're running locally
-  redis = require("redis").createClient();
+  redis = require("fakeredis").createClient();
 }
 
 /* Turn Redis Methods Into Promise-returning Ones */
