@@ -10,7 +10,7 @@
     "express": "^4.0.0",
     "body-parser": "*",
     "request": "*",
-    "redis": ">= 0.10.3",
+    "fakeredis": "*",
     "q": "^1.0.1"
   },
   "engines": {
