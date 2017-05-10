@@ -53,7 +53,7 @@ Set up an [Outgoing Webhook Integration](https://my.slack.com/services/new/outgo
 
 To get the bot's avatar to work, you need to set up a [Custom Emoji](https://my.slack.com/customize/emoji) with the name ':pkmntrainer:'. Use the included `pkmntrainer.png` image, or a custom one if you prefer.
 
-##How to play
+## How to play
 
 List of commands:
 
@@ -65,7 +65,7 @@ List of commands:
 
 `pkmn end battle`: end the battle before someone wins. You can also use this to end battles someone else started but never finished.
 
-##Features
+## Features
 
 Currently the battle system is a tiny fraction of Pokemon's actual battle system. It supports:
 
@@ -83,12 +83,12 @@ It currently does not support:
 - multiple concurrent battles
 - player vs player battles
 
-###Developing New Features: PJScrape and Supplementary JSON
+### Developing New Features: PJScrape and Supplementary JSON
 
 If you wish to develop new features for this, you will likely run into a situation in which PokeAPI's data isn't sufficient. This happened to me with move types. I ended up scraping the data with [PJScrape](http://nrabinowitz.github.io/pjscrape/) from an external website. The folder `supplemental_json` contains both the scraped data in JSON format as well as the config file passed to PJScrape in order to generate the data.
 
 If you end up needing to scrape a page for supplemental data, please take a look at that folder.
 
-##Contact
+## Contact
 
 Feel free to message me on Twitter, [@RobertVinluan](http://twitter.com/robertvinluan). For now I'm making small updates but not adding features. If you would like to add a feature please submit a pull request. I promise I'll look at it (and probably approve it)!
